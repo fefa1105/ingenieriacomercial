@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Armador de horario · Ingeniería Comercial</title>
+<style>
+  :root{
+    --ink:#131a2b; --paper:#eceef3; --surface:#fff;
+    --rule:#c9d0dc; --rule-soft:#e3e7ee; --muted:#5f6879;
+    --accent:#1f3fd4; --warn:#b3162f; --warn-bg:#fdeaed;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --num:"SF Mono",SFMono-Regular,ui-monospace,"Cascadia Mono","Segoe UI Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font); background:var(--paper); color:var(--ink);
+    font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit; font-size:inherit; cursor:pointer}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .lbl{font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---------- barra superior ---------- */
+  .top{display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:13px 20px;
+       background:var(--ink); color:#fff}
+  .brand{font-weight:700; font-size:16px; letter-spacing:-.01em; margin-right:auto}
+  .brand span{display:block; font-size:10px; font-weight:600; letter-spacing:.14em;
+              text-transform:uppercase; color:#8b95ab; margin-top:1px}
+  .seg{display:flex; border:1px solid #333c55; border-radius:6px; overflow:hidden}
+  .seg button{background:none; color:#c2cadb; border:0; padding:7px 14px; font-size:12px; font-weight:600}
+  .seg button+button{border-left:1px solid #333c55}
+  .seg button[aria-pressed="true"]{background:var(--accent); color:#fff}
+  .act{background:none; color:#c2cadb; border:1px solid #333c55; border-radius:6px;
+       padding:7px 12px; font-size:12px; font-weight:600}
+  .act:hover{color:#fff; border-color:#5d6785}
+
+  /* ---------- estructura ---------- */
+  .wrap{display:grid; grid-template-columns:334px minmax(0,1fr); gap:18px; padding:18px; align-items:start}
+  .card{background:var(--surface); border:1px solid var(--rule); border-radius:9px}
+  .card>header{padding:11px 14px; border-bottom:1px solid var(--rule-soft);
+               display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .side{position:sticky; top:18px}
+
+  /* ---------- buscador ---------- */
+  .search{padding:12px 14px 10px}
+  .search input{width:100%; padding:9px 11px; font:inherit; color:var(--ink);
+    border:1.5px solid var(--rule); border-radius:7px; background:#fbfcfe}
+  .search input:focus{border-color:var(--accent); outline:none}
+  .chips{display:flex; flex-wrap:wrap; gap:5px; margin-top:9px}
+  .chips button{border:1px solid var(--rule); background:#fff; color:var(--muted);
+    border-radius:99px; padding:3px 10px; font-size:11px; font-weight:600}
+  .chips button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff}
+
+  .results{max-height:44vh; overflow:auto; border-top:1px solid var(--rule-soft)}
+  .row{display:flex; gap:9px; width:100%; text-align:left; background:none; border:0;
+       border-bottom:1px solid var(--rule-soft); padding:9px 14px; align-items:flex-start}
+  .row:hover{background:#f5f7fb}
+  .row .spine{width:3px; align-self:stretch; border-radius:2px; flex:none; margin-top:2px}
+  .row .body{min-width:0; flex:1}
+  .row .name{font-weight:600; font-size:13px; line-height:1.3}
+  .row .meta{font-size:11px; color:var(--muted); margin-top:2px}
+  .row .tick{flex:none; font-size:11px; font-weight:700; color:var(--accent); padding-top:2px}
+  .row[aria-pressed="true"]{background:#f2f5fd}
+  .row.clash .name::after{content:" · tope"; color:var(--warn); font-weight:700}
+  .empty{padding:22px 14px; color:var(--muted); font-size:13px}
+
+  .warnmark{display:inline-block; margin-left:5px; color:var(--warn); font-weight:700; cursor:help}
+
+  /* ---------- seleccionados ---------- */
+  .picked .row{border-bottom:1px solid var(--rule-soft)}
+  .picked .del{border:0; background:none; color:var(--muted); font-size:16px; line-height:1;
+    padding:0 2px; flex:none}
+  .picked .del:hover{color:var(--warn)}
+  .tot{display:flex; justify-content:space-between; gap:12px; padding:11px 14px;
+       border-top:1px solid var(--rule-soft); font-size:12px; color:var(--muted)}
+  .tot b{color:var(--ink); font-variant-numeric:tabular-nums}
+  .alert{margin:0; padding:10px 14px; background:var(--warn-bg); color:var(--warn);
+         font-size:12px; border-bottom:1px solid #f5cdd4}
+  .alert b{display:block; margin-bottom:2px}
+
+  /* ---------- grilla ---------- */
+  .gridwrap{overflow:auto; border-radius:0 0 9px 9px}
+  table.grid{border-collapse:collapse; width:100%; table-layout:fixed; min-width:720px}
+  table.grid th, table.grid td{border:1px solid var(--rule-soft); vertical-align:top}
+  table.grid thead th{background:#f3f5f9; padding:8px 6px; font-size:10px; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--muted); border-color:var(--rule)}
+  col.hcol{width:82px}
+  td.hora{background:#f8f9fc; text-align:center; padding:6px 4px; font-family:var(--num);
+    font-size:10.5px; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums}
+  td.slot{height:40px; padding:0}
+  td.slot.free{background:repeating-linear-gradient(135deg,#fff,#fff 6px,#fafbfd 6px,#fafbfd 12px)}
+  .blk{height:100%; padding:5px 7px 5px 6px; border-left:3px solid; overflow:hidden}
+  .blk .n{font-size:11.5px; font-weight:600; line-height:1.22; display:block}
+  .blk .s{font-size:10px; margin-top:2px; opacity:.8; display:block}
+  td.slot.dupe{background:var(--warn-bg)}
+  td.slot.dupe .blk{border-left-color:var(--warn)!important}
+  .stack{display:flex; flex-direction:column; height:100%}
+  .stack>.blk{flex:1; min-height:30px}
+  .stack>.blk+.blk{border-top:1px dashed var(--warn)}
+
+  .printhead{display:none}
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    .side{position:static}
+    .results{max-height:none}
+  }
+
+  @media print{
+    body{background:#fff}
+    .top,.side,.gridwrap{border:0}
+    .top,.side{display:none}
+    .wrap{display:block; padding:0}
+    .card{border:0}
+    .card>header{display:none}
+    .printhead{display:block; padding:0 0 10px}
+    .printhead h1{font-size:15px; margin:0 0 3px}
+    .printhead p{font-size:11px; color:#444; margin:0}
+    .gridwrap{overflow:visible}
+    table.grid{min-width:0; font-size:9px}
+    td.slot{height:auto}
+    .blk .n{font-size:9px}
+    .blk .s{font-size:8px}
+    td.slot.free{background:#fff}
+    @page{size:landscape; margin:12mm}
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">Armador de horario<span>Ingeniería Comercial · INGECO</span></div>
+  <div class="seg" role="group" aria-label="Periodo académico">
+    <button type="button" data-per="1-2026">1º sem. 2026</button>
+    <button type="button" data-per="2-2026">2º sem. 2026</button>
+  </div>
+  <button type="button" class="act" id="btnPrint">Imprimir</button>
+  <button type="button" class="act" id="btnLink">Copiar enlace</button>
+  <button type="button" class="act" id="btnClear">Vaciar</button>
+</div>
+
+<div class="wrap">
+
+  <div class="side">
+    <div class="card" style="margin-bottom:16px">
+      <div class="search">
+        <label class="lbl" for="q">Buscar ramo</label>
+        <input type="search" id="q" placeholder="Nombre, código o profesor" autocomplete="off"
+               style="margin-top:6px">
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="results" id="results"></div>
+    </div>
+
+    <div class="card">
+      <header>
+        <span class="lbl">Mi horario</span>
+        <span class="lbl num" id="count">0 ramos</span>
+      </header>
+      <div id="alert"></div>
+      <div class="picked" id="picked"></div>
+      <div class="tot">
+        <span>Bloques/semana <b class="num" id="tBlocks">0</b></span>
+        <span>Créditos <b class="num" id="tCred">0</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="lbl">Bloques horarios</span>
+      <span class="lbl" id="perLabel"></span>
+    </header>
+    <div class="printhead">
+      <h1 id="printTitle"></h1>
+      <p id="printMeta"></p>
+    </div>
+    <div class="gridwrap"><table class="grid" id="grid"></table></div>
+  </div>
+
+</div>
+
+<script>
+/* =====================================================================
+   ARMADOR DE HORARIO — INGENIERÍA COMERCIAL
+   Archivo único, sin dependencias ni servidor.
+   Para actualizar los ramos de un semestre, reemplazar SOLO el bloque
+   "const DATA = {...};" de la línea siguiente por el nuevo JSON.
+   ===================================================================== */
+
+const DATA = {"bloques": ["08:15-09:00", "09:00-09:45", "09:50-10:35", "10:35-11:20", "11:25-12:10", "12:10-12:55", "13:00-13:45", "13:45-14:30", "14:35-15:20", "15:20-16:05", "16:10-16:55", "16:55-17:40", "17:45-18:30", "18:30-19:15"], "dias": ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES"], "periodos": {"1-2026": [{"codigo": "451827", "nombre": "Algebra I", "seccion": "", "semestre": 1, "cupos": 90, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "08:15-09:00", "sala": "93-A"}, {"dia": "LUNES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "LUNES", "bloque": "09:50-10:35", "sala": "93-A"}, {"dia": "MARTES", "bloque": "14:35-15:20", "sala": "93-A"}, {"dia": "MARTES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "MARTES", "bloque": "16:10-16:55", "sala": "93-A"}], "profesor": "Felipe Cisterna", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "", "nombre": "CADE", "seccion": "", "semestre": 1, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MARTES", "bloque": "11:25-12:10", "sala": "93-A"}, {"dia": "JUEVES", "bloque": "11:25-12:10", "sala": "93-A"}, {"dia": "JUEVES", "bloque": "12:10-12:55", "sala": "93-A"}], "profesor": "", "codigoMalla": "", "nota": "Sin codigo en el horario oficial.", "creditos": null, "nombreMalla": ""}, {"codigo": "451825", "nombre": "Cálculo I", "seccion": "", "semestre": 1, "cupos": 91, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "08:15-09:00", "sala": "93-A"}, {"dia": "JUEVES", "bloque": "08:15-09:00", "sala": "93-A"}, {"dia": "MIERCOLES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "JUEVES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "LUNES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "LUNES", "bloque": "11:25-12:10", "sala": "93-A"}], "profesor": "Felipe Cisterna", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": ""}, {"codigo": "451828", "nombre": "Derecho Corporativo", "seccion": "", "semestre": 1, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "16:55-17:40", "sala": ""}, {"dia": "MIERCOLES", "bloque": "16:55-17:40", "sala": ""}, {"dia": "MARTES", "bloque": "17:45-18:30", "sala": "93-A"}, {"dia": "MIERCOLES", "bloque": "17:45-18:30", "sala": "93-A"}], "profesor": "Cristian Baeza", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Derecho Corporativo I"}, {"codigo": "451826", "nombre": "Economía I", "seccion": "", "semestre": 1, "cupos": 85, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": "93-A"}, {"dia": "JUEVES", "bloque": "09:50-10:35", "sala": "93-A"}, {"dia": "MIERCOLES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "JUEVES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "11:25-12:10", "sala": "93-A"}], "profesor": "Sandra Sepúlveda", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451824", "nombre": "Gestión de Empresas", "seccion": "", "semestre": 1, "cupos": 90, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "08:15-09:00", "sala": "93-A"}, {"dia": "MARTES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MARTES", "bloque": "09:50-10:35", "sala": "93-A"}, {"dia": "MIERCOLES", "bloque": "15:20-16:05", "sala": "93-A"}, {"dia": "MIERCOLES", "bloque": "16:10-16:55", "sala": "93-A"}], "profesor": "Gerardo González, Manuel Velásquez", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": ""}, {"codigo": "451834", "nombre": "Cálculo III", "seccion": "", "semestre": 3, "cupos": 80, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "11:25-12:10", "sala": "411"}, {"dia": "JUEVES", "bloque": "12:10-12:55", "sala": "411"}, {"dia": "VIERNES", "bloque": "12:10-12:55", "sala": "411"}, {"dia": "JUEVES", "bloque": "13:00-13:45", "sala": "411"}, {"dia": "VIERNES", "bloque": "13:00-13:45", "sala": "411"}], "profesor": "Felipe Cisterna", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451835", "nombre": "Contabilidad II", "seccion": "", "semestre": 3, "cupos": 80, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "09:50-10:35", "sala": "411"}, {"dia": "LUNES", "bloque": "10:35-11:20", "sala": "411"}, {"dia": "VIERNES", "bloque": "10:35-11:20", "sala": "411"}, {"dia": "LUNES", "bloque": "11:25-12:10", "sala": "411"}, {"dia": "LUNES", "bloque": "12:10-12:55", "sala": "411"}], "profesor": "Paulina Vallejos", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": ""}, {"codigo": "451837", "nombre": "Estadística I", "seccion": "", "semestre": 3, "cupos": 50, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "14:35-15:20", "sala": "21"}, {"dia": "MARTES", "bloque": "15:20-16:05", "sala": "21"}, {"dia": "MIERCOLES", "bloque": "15:20-16:05", "sala": "93-B"}, {"dia": "MARTES", "bloque": "16:10-16:55", "sala": "21"}, {"dia": "MIERCOLES", "bloque": "16:10-16:55", "sala": "93-B"}], "profesor": "Sergio Rifo", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451839", "nombre": "Formación General I", "seccion": "", "semestre": 3, "cupos": 70, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "10:35-11:20", "sala": "421"}, {"dia": "MARTES", "bloque": "11:25-12:10", "sala": "421"}], "profesor": "Gerardo González", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": ""}, {"codigo": "451836", "nombre": "Microeconomía I", "seccion": "", "semestre": 3, "cupos": 70, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "08:15-09:00", "sala": "421"}, {"dia": "JUEVES", "bloque": "09:00-09:45", "sala": "421"}, {"dia": "JUEVES", "bloque": "09:50-10:35", "sala": "421"}, {"dia": "VIERNES", "bloque": "14:35-15:20", "sala": "421"}, {"dia": "VIERNES", "bloque": "15:20-16:05", "sala": "421"}], "profesor": "Moisés Carrasco", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451838", "nombre": "Tecnologías de la Información I", "seccion": "", "semestre": 3, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "12:10-12:55", "sala": "12"}, {"dia": "MARTES", "bloque": "13:00-13:45", "sala": "12"}], "profesor": "Sergio Rifo", "codigoMalla": "", "nota": "", "creditos": 2, "nombreMalla": "Tecnologías de Información I"}, {"codigo": "451847", "nombre": "Derecho Corporativo II", "seccion": "", "semestre": 5, "cupos": 60, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "16:10-16:55", "sala": "12"}, {"dia": "JUEVES", "bloque": "16:10-16:55", "sala": "421"}, {"dia": "LUNES", "bloque": "16:55-17:40", "sala": "12"}, {"dia": "JUEVES", "bloque": "16:55-17:40", "sala": "421"}], "profesor": "Alejandro Elgueta", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": ""}, {"codigo": "451845", "nombre": "Finanzas I", "seccion": "", "semestre": 5, "cupos": 90, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "08:15-09:00", "sala": "411"}, {"dia": "JUEVES", "bloque": "08:15-09:00", "sala": "411"}, {"dia": "MARTES", "bloque": "09:00-09:45", "sala": "411"}, {"dia": "JUEVES", "bloque": "09:00-09:45", "sala": "411"}, {"dia": "JUEVES", "bloque": "09:50-10:35", "sala": "411"}], "profesor": "Jorge Muñoz", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451846", "nombre": "Gestión de Marketing I", "seccion": "", "semestre": 5, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "13:45-14:30", "sala": "421"}, {"dia": "MARTES", "bloque": "14:35-15:20", "sala": "421"}, {"dia": "JUEVES", "bloque": "14:35-15:20", "sala": "421"}, {"dia": "MARTES", "bloque": "15:20-16:05", "sala": "421"}, {"dia": "JUEVES", "bloque": "15:20-16:05", "sala": "421"}], "profesor": "Gerardo González", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451869", "nombre": "Inglés Comunicativo II", "seccion": "S1", "semestre": 5, "cupos": 30, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "08:15-09:00", "sala": "21"}, {"dia": "LUNES", "bloque": "09:00-09:45", "sala": "21"}, {"dia": "LUNES", "bloque": "13:00-13:45", "sala": "14"}, {"dia": "MARTES", "bloque": "13:00-13:45", "sala": "22"}, {"dia": "LUNES", "bloque": "13:45-14:30", "sala": "14"}], "profesor": "Ricardo Cisternas", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Inglés Comunic. II Nivel Elemental"}, {"codigo": "451869", "nombre": "Inglés Comunicativo II", "seccion": "S2", "semestre": 5, "cupos": 30, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "09:50-10:35", "sala": "21"}, {"dia": "LUNES", "bloque": "10:35-11:20", "sala": "21"}, {"dia": "JUEVES", "bloque": "11:25-12:10", "sala": ""}], "profesor": "Ricardo Cisternas", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Inglés Comunic. II Nivel Elemental"}, {"codigo": "451849", "nombre": "Métodos Cuantitativos", "seccion": "", "semestre": 5, "cupos": 50, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "09:50-10:35", "sala": "12"}, {"dia": "MARTES", "bloque": "10:35-11:20", "sala": "12"}, {"dia": "MIERCOLES", "bloque": "10:35-11:20", "sala": "12"}, {"dia": "MARTES", "bloque": "11:25-12:10", "sala": "12"}, {"dia": "MIERCOLES", "bloque": "11:25-12:10", "sala": "12"}], "profesor": "Jaime Moreno", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451848", "nombre": "Microeconomía II", "seccion": "", "semestre": 5, "cupos": 50, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "08:15-09:00", "sala": "12"}, {"dia": "MIERCOLES", "bloque": "09:00-09:45", "sala": "12"}, {"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": "12"}, {"dia": "LUNES", "bloque": "14:35-15:20", "sala": "12"}, {"dia": "LUNES", "bloque": "15:20-16:05", "sala": "12"}], "profesor": "Moisés Carrasco", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451960", "nombre": "Electivo de licenciatura: Emprendimiento II", "seccion": "", "semestre": 7, "cupos": 40, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "10:35-11:20", "sala": "11"}, {"dia": "VIERNES", "bloque": "11:25-12:10", "sala": "11"}, {"dia": "VIERNES", "bloque": "12:10-12:55", "sala": "11"}, {"dia": "LUNES", "bloque": "14:35-15:20", "sala": "93-B"}, {"dia": "LUNES", "bloque": "15:20-16:05", "sala": "93-B"}], "profesor": "Manuel Velásquez", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451951", "nombre": "Electivo de Licenciatura: Finanzas III", "seccion": "", "semestre": 7, "cupos": 20, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "09:50-10:35", "sala": "22"}, {"dia": "MARTES", "bloque": "10:35-11:20", "sala": "22"}, {"dia": "JUEVES", "bloque": "10:35-11:20", "sala": "14"}, {"dia": "MARTES", "bloque": "11:25-12:10", "sala": "22"}, {"dia": "JUEVES", "bloque": "11:25-12:10", "sala": "14"}], "profesor": "Jorge Muñoz", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451855", "nombre": "Evaluación de Proyectos", "seccion": "", "semestre": 7, "cupos": 60, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "13:45-14:30", "sala": "94"}, {"dia": "JUEVES", "bloque": "14:35-15:20", "sala": "94"}, {"dia": "MARTES", "bloque": "15:20-16:05", "sala": "94"}, {"dia": "MARTES", "bloque": "16:10-16:55", "sala": "94"}, {"dia": "MARTES", "bloque": "16:55-17:40", "sala": "94"}], "profesor": "Jaime Moreno", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451857", "nombre": "Gestión de Marketing II", "seccion": "", "semestre": 7, "cupos": 60, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "08:15-09:00", "sala": "11"}, {"dia": "VIERNES", "bloque": "09:00-09:45", "sala": "11"}, {"dia": "VIERNES", "bloque": "09:50-10:35", "sala": "11"}, {"dia": "JUEVES", "bloque": "16:10-16:55", "sala": "11"}, {"dia": "JUEVES", "bloque": "16:55-17:40", "sala": "11"}], "profesor": "Gerardo González", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451858", "nombre": "Gestión de Personas II", "seccion": "", "semestre": 7, "cupos": 50, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "09:50-10:35", "sala": "22"}, {"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": "421"}, {"dia": "LUNES", "bloque": "10:35-11:20", "sala": "22"}, {"dia": "MIERCOLES", "bloque": "10:35-11:20", "sala": "421"}, {"dia": "MIERCOLES", "bloque": "11:25-12:10", "sala": "421"}], "profesor": "Francisco Díaz", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451871", "nombre": "Inglés Comunicativo IV", "seccion": "S1", "semestre": 7, "cupos": 40, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "11:25-12:10", "sala": "13"}, {"dia": "LUNES", "bloque": "12:10-12:55", "sala": "13"}, {"dia": "MARTES", "bloque": "12:10-12:55", "sala": "22"}], "profesor": "escuela de educación / nativo", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Inglés Comunic. IV Nivel Básico Alto"}, {"codigo": "451871", "nombre": "Inglés Comunicativo IV", "seccion": "S2", "semestre": 7, "cupos": 40, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "09:00-09:45", "sala": "34"}, {"dia": "LUNES", "bloque": "16:10-16:55", "sala": "93-B"}, {"dia": "LUNES", "bloque": "16:55-17:40", "sala": "93-B"}], "profesor": "escuela de educación / nativo", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Inglés Comunic. IV Nivel Básico Alto"}, {"codigo": "457982", "nombre": "ELECTIVO: Admin. Inventarios", "seccion": "", "semestre": 9, "cupos": 20, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "13:45-14:30", "sala": "106-B"}, {"dia": "MARTES", "bloque": "14:35-15:20", "sala": "106-B"}, {"dia": "JUEVES", "bloque": "15:20-16:05", "sala": "106-B"}, {"dia": "JUEVES", "bloque": "16:10-16:55", "sala": "106-B"}], "profesor": "Jaime Moreno", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451970", "nombre": "ELECTIVO: Aspectos Prácticos Empresariales", "seccion": "", "semestre": 9, "cupos": 40, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "11:25-12:10", "sala": "94"}, {"dia": "MARTES", "bloque": "12:10-12:55", "sala": "94"}, {"dia": "MIERCOLES", "bloque": "15:20-16:05", "sala": "411"}, {"dia": "MIERCOLES", "bloque": "16:10-16:55", "sala": "411"}], "profesor": "Carmen Veloso", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451856", "nombre": "ELECTIVO: Coaching", "seccion": "", "semestre": 9, "cupos": 20, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "08:15-09:00", "sala": "3"}, {"dia": "JUEVES", "bloque": "09:00-09:45", "sala": "3"}, {"dia": "JUEVES", "bloque": "09:50-10:35", "sala": "3"}, {"dia": "JUEVES", "bloque": "10:35-11:20", "sala": "3"}], "profesor": "Francisco Díaz", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451950", "nombre": "ELECTIVO: Control de Gestión", "seccion": "", "semestre": 9, "cupos": 40, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "08:15-09:00", "sala": "SRB //103"}, {"dia": "VIERNES", "bloque": "08:15-09:00", "sala": "31"}, {"dia": "MIERCOLES", "bloque": "09:00-09:45", "sala": "SRB //103"}, {"dia": "VIERNES", "bloque": "09:00-09:45", "sala": "31"}, {"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": "SRB //103"}], "profesor": "Alejandro Elgueta", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451958", "nombre": "ELECTIVO: Decisiones Organizacionales fundamentos Psicológicos y Económicos", "seccion": "", "semestre": 9, "cupos": 40, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "09:50-10:35", "sala": "31"}, {"dia": "VIERNES", "bloque": "10:35-11:20", "sala": "31"}, {"dia": "VIERNES", "bloque": "11:25-12:10", "sala": "31"}, {"dia": "VIERNES", "bloque": "12:10-12:55", "sala": "31"}, {"dia": "VIERNES", "bloque": "13:00-13:45", "sala": "31"}], "profesor": "Francisco Díaz, Moisés Carrasco", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451966", "nombre": "ELECTIVO: Econometría II", "seccion": "", "semestre": 9, "cupos": 10, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "08:15-09:00", "sala": "Sala reuniones biblioteca"}, {"dia": "MIERCOLES", "bloque": "08:15-09:00", "sala": "SRB //103"}, {"dia": "LUNES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MIERCOLES", "bloque": "09:00-09:45", "sala": "SRB //103"}, {"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": "SRB //103"}], "profesor": "Jorge Muñoz", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451963", "nombre": "ELECTIVO: Economía y Comercio Internacional", "seccion": "", "semestre": 9, "cupos": 30, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "09:50-10:35", "sala": "24"}, {"dia": "MARTES", "bloque": "10:35-11:20", "sala": "24"}, {"dia": "JUEVES", "bloque": "11:25-12:10", "sala": "3"}, {"dia": "JUEVES", "bloque": "12:10-12:55", "sala": "3"}, {"dia": "JUEVES", "bloque": "13:00-13:45", "sala": "3"}], "profesor": "Sandra Sepúlveda", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}], "2-2026": [{"codigo": "451827", "nombre": "Algebra I", "seccion": "", "semestre": 2, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "JUEVES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "MARTES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "JUEVES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "MARTES", "bloque": "16:10-16:55", "sala": ""}], "profesor": "Sergio Rifo", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451832", "nombre": "Algebra II", "seccion": "", "semestre": 2, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "MARTES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "VIERNES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "MARTES", "bloque": "13:00-13:45", "sala": ""}, {"dia": "VIERNES", "bloque": "13:00-13:45", "sala": ""}], "profesor": "Felipe Cisterna", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": ""}, {"codigo": "451825", "nombre": "Cálculo I", "seccion": "", "semestre": 2, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "MIERCOLES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "LUNES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "LUNES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "LUNES", "bloque": "12:10-12:55", "sala": ""}], "profesor": "Felipe Cisterna", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": ""}, {"codigo": "451831", "nombre": "Cálculo II", "seccion": "", "semestre": 2, "cupos": 60, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "VIERNES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "JUEVES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "VIERNES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "VIERNES", "bloque": "11:25-12:10", "sala": ""}], "profesor": "Felipe Cisterna", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451830", "nombre": "Contabilidad I", "seccion": "", "semestre": 2, "cupos": 90, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "JUEVES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "LUNES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "LUNES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "LUNES", "bloque": "16:10-16:55", "sala": ""}], "profesor": "Alejandro Elgueta", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": ""}, {"codigo": "452833", "nombre": "Economía II", "seccion": "", "semestre": 2, "cupos": 70, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "MARTES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MARTES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "JUEVES", "bloque": "13:00-13:45", "sala": ""}, {"dia": "JUEVES", "bloque": "13:45-14:30", "sala": ""}], "profesor": "Moisés Carrasco", "codigoMalla": "451833", "nota": "El horario oficial trae el codigo 452833; en la malla es 451833.", "creditos": 4, "nombreMalla": ""}, {"codigo": "451829", "nombre": "Gestión de Personas I", "seccion": "", "semestre": 2, "cupos": 70, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "VIERNES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "MARTES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "VIERNES", "bloque": "09:00-09:45", "sala": ""}], "profesor": "Francisco Díaz", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": ""}, {"codigo": "451841", "nombre": "Cálculo Financiero", "seccion": "", "semestre": 4, "cupos": 60, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "VIERNES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "JUEVES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "JUEVES", "bloque": "10:35-11:20", "sala": ""}], "profesor": "Victor Solar", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": ""}, {"codigo": "451843", "nombre": "Contabilidad de Costos", "seccion": "", "semestre": 4, "cupos": 60, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "JUEVES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "MIERCOLES", "bloque": "16:10-16:55", "sala": ""}, {"dia": "JUEVES", "bloque": "16:10-16:55", "sala": ""}], "profesor": "Alejandro Elgueta", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451844", "nombre": "Estadística II", "seccion": "", "semestre": 4, "cupos": 60, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "JUEVES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "VIERNES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "VIERNES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "VIERNES", "bloque": "11:25-12:10", "sala": ""}], "profesor": "Sergio Rifo", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451869", "nombre": "Inglés Comunicativo I", "seccion": "S1", "semestre": 4, "cupos": 32, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "LUNES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "JUEVES", "bloque": "11:25-12:10", "sala": ""}], "profesor": "Jessica Jara / Ricardo Cisternas", "codigoMalla": "451868", "nota": "El horario oficial trae 451869, pero en la malla ese codigo es Ingles Comunicativo II. Ingles Comunicativo I es 451868. Confirmar con la Escuela.", "creditos": 3, "nombreMalla": "Inglés Comunic. I Nivel Principiante"}, {"codigo": "451869", "nombre": "Inglés Comunicativo I", "seccion": "S2", "semestre": 4, "cupos": 32, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "LUNES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "JUEVES", "bloque": "12:10-12:55", "sala": ""}], "profesor": "Jessica Jara / Ricardo Cisternas", "codigoMalla": "451868", "nota": "El horario oficial trae 451869, pero en la malla ese codigo es Ingles Comunicativo II. Ingles Comunicativo I es 451868. Confirmar con la Escuela.", "creditos": 3, "nombreMalla": "Inglés Comunic. I Nivel Principiante"}, {"codigo": "451840", "nombre": "Macroeconomía I", "seccion": "", "semestre": 4, "cupos": 70, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "MIERCOLES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "LUNES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MIERCOLES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": ""}], "profesor": "Jorge Muñoz", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451842", "nombre": "Tecnologías de la Información II", "seccion": "", "semestre": 4, "cupos": 50, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "13:00-13:45", "sala": ""}, {"dia": "LUNES", "bloque": "13:45-14:30", "sala": ""}], "profesor": "Moisés Carrasco", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Tecnologías de Información II"}, {"codigo": "451854", "nombre": "Administración Estratégica I", "seccion": "", "semestre": 6, "cupos": 60, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "VIERNES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "VIERNES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "MARTES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "MARTES", "bloque": "13:00-13:45", "sala": ""}], "profesor": "Manuel Velásquez", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451852", "nombre": "Econometría I", "seccion": "", "semestre": 6, "cupos": 80, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "JUEVES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "MARTES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "JUEVES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MARTES", "bloque": "09:50-10:35", "sala": ""}], "profesor": "Jorge Muñoz", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451850", "nombre": "Finanzas II", "seccion": "", "semestre": 6, "cupos": 80, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "MARTES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "JUEVES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MARTES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "JUEVES", "bloque": "11:25-12:10", "sala": ""}], "profesor": "Jorge Muñoz", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451851", "nombre": "Gestión de Operaciones", "seccion": "", "semestre": 6, "cupos": 70, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "MARTES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "MARTES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "MARTES", "bloque": "16:10-16:55", "sala": ""}], "profesor": "Jaime Moreno", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451870", "nombre": "Inglés Comunicativo III", "seccion": "S1", "semestre": 6, "cupos": 32, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "LUNES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "LUNES", "bloque": "15:20-16:05", "sala": ""}], "profesor": "Jessica Jara / Ricardo Cisternas", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Inglés Comunic. III Nivel Básico"}, {"codigo": "451870", "nombre": "Inglés Comunicativo III", "seccion": "S2", "semestre": 6, "cupos": 32, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "LUNES", "bloque": "16:55-17:40", "sala": ""}, {"dia": "LUNES", "bloque": "17:45-18:30", "sala": ""}], "profesor": "Jessica Jara / Ricardo Cisternas", "codigoMalla": "", "nota": "", "creditos": 3, "nombreMalla": "Inglés Comunic. III Nivel Básico"}, {"codigo": "451853", "nombre": "Macroeconomía II", "seccion": "", "semestre": 6, "cupos": 60, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "MIERCOLES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "JUEVES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "JUEVES", "bloque": "13:00-13:45", "sala": ""}], "profesor": "Sandra Sepúlveda Yelpo", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451861", "nombre": "Administración Estratégica II", "seccion": "", "semestre": 8, "cupos": 60, "modalidad": "", "bloques": [{"dia": "VIERNES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "VIERNES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "LUNES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "LUNES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "LUNES", "bloque": "16:10-16:55", "sala": ""}], "profesor": "Manuel Velásquez", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": ""}, {"codigo": "457898", "nombre": "Bienestar Organizacional", "seccion": "", "semestre": 8, "cupos": 40, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "MARTES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "MARTES", "bloque": "16:10-16:55", "sala": ""}, {"dia": "JUEVES", "bloque": "16:10-16:55", "sala": ""}, {"dia": "JUEVES", "bloque": "16:55-17:40", "sala": ""}], "profesor": "Francisco Díaz", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451810", "nombre": "Creatividad Empresarial", "seccion": "", "semestre": 8, "cupos": 40, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "MIERCOLES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "VIERNES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "VIERNES", "bloque": "15:20-16:05", "sala": ""}], "profesor": "Gerardo Gonzalez", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451953", "nombre": "Emprendimiento I", "seccion": "", "semestre": 8, "cupos": 40, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "JUEVES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "MIERCOLES", "bloque": "16:10-16:55", "sala": ""}, {"dia": "MIERCOLES", "bloque": "16:55-17:40", "sala": ""}], "profesor": "Jaime Castillo", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451855", "nombre": "Evaluación de Proyectos", "seccion": "", "semestre": 8, "cupos": 8, "modalidad": "tutoría", "bloques": [{"dia": "JUEVES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "MARTES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "JUEVES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "MARTES", "bloque": "13:00-13:45", "sala": ""}], "profesor": "Jaime Moreno", "codigoMalla": "", "nota": "", "creditos": 4, "nombreMalla": ""}, {"codigo": "451862", "nombre": "Metodología de la Investigación en Administración", "seccion": "", "semestre": 8, "cupos": 50, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "LUNES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "LUNES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "LUNES", "bloque": "12:10-12:55", "sala": ""}], "profesor": "Moisés Carrasco", "codigoMalla": "", "nota": "", "creditos": 5, "nombreMalla": "Met. de la Investigación en Administración"}, {"codigo": "457977", "nombre": "Cadena de Abastecimiento y Logística", "seccion": "", "semestre": 10, "cupos": 20, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "14:35-15:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "JUEVES", "bloque": "15:20-16:05", "sala": ""}, {"dia": "MIERCOLES", "bloque": "16:10-16:55", "sala": ""}], "profesor": "Jaime Moreno/Sandra Sepúlveda", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451957", "nombre": "Comunicación Estratégica", "seccion": "", "semestre": 10, "cupos": 40, "modalidad": "", "bloques": [{"dia": "MARTES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "MARTES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "MARTES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "JUEVES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "JUEVES", "bloque": "10:35-11:20", "sala": ""}], "profesor": "Gerardo González", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451952", "nombre": "Desarrollo de Habilidades Directivas", "seccion": "", "semestre": 10, "cupos": 25, "modalidad": "", "bloques": [{"dia": "JUEVES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "JUEVES", "bloque": "12:10-12:55", "sala": ""}, {"dia": "JUEVES", "bloque": "13:00-13:45", "sala": ""}, {"dia": "JUEVES", "bloque": "13:45-14:30", "sala": ""}], "profesor": "Francisco Díaz", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451962", "nombre": "Gestión Laboral y Previsional", "seccion": "", "semestre": 10, "cupos": 49, "modalidad": "", "bloques": [{"dia": "MIERCOLES", "bloque": "10:35-11:20", "sala": ""}, {"dia": "MIERCOLES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "VIERNES", "bloque": "11:25-12:10", "sala": ""}, {"dia": "VIERNES", "bloque": "12:10-12:55", "sala": ""}], "profesor": "Carmen Veloso Ramos", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}, {"codigo": "451972", "nombre": "Tributación aplicada a los Ingenieros", "seccion": "", "semestre": 10, "cupos": 40, "modalidad": "", "bloques": [{"dia": "LUNES", "bloque": "08:15-09:00", "sala": ""}, {"dia": "LUNES", "bloque": "09:00-09:45", "sala": ""}, {"dia": "VIERNES", "bloque": "09:50-10:35", "sala": ""}, {"dia": "VIERNES", "bloque": "10:35-11:20", "sala": ""}], "profesor": "Alejandro Elgueta", "codigoMalla": "", "nota": "", "creditos": null, "nombreMalla": ""}]}};
+
+/* color fuerte + tinte de fondo, por ramo */
+const PALETTE = [
+  ['#1f3fd4','#e4e8fb'], ['#0d6e5f','#dcefea'], ['#a8471a','#f7e6dc'],
+  ['#6237a8','#eae3f8'], ['#97173f','#fadfe6'], ['#12628f','#ddedf6'],
+  ['#4f6412','#eaf0d9'], ['#8a5a10','#f7ecd7'], ['#3a4761','#e5e8ef'],
+  ['#7a2478','#f4e2f3']
+];
+
+/* almacenamiento tolerante (SharePoint / iframe / modo restringido) */
+const store = (() => {
+  const mem = {};
+  try {
+    localStorage.setItem('__t', '1'); localStorage.removeItem('__t');
+    return { get: k => localStorage.getItem(k), set: (k, v) => localStorage.setItem(k, v) };
+  } catch (e) {
+    return { get: k => (k in mem ? mem[k] : null), set: (k, v) => { mem[k] = v; } };
+  }
+})();
+
+const norm = s => (s || '').toString().normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const esc = s => (s || '').toString()
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const cursoId = c =>
+  (c.codigo || 'x-' + norm(c.nombre).replace(/\W+/g, '-')) + (c.seccion ? '-' + c.seccion : '');
+
+/* ---------- índice ---------- */
+const IDX = {};
+for (const [per, lista] of Object.entries(DATA.periodos)) {
+  IDX[per] = lista.map((c, i) => {
+    const [fuerte, tinte] = PALETTE[i % PALETTE.length];
+    return { ...c, id: cursoId(c), fuerte, tinte,
+      busca: norm([c.nombre, c.nombreMalla, c.codigo, c.codigoMalla, c.profesor,
+                   c.seccion, 'semestre ' + c.semestre].join(' ')) };
+  });
+}
+const BI = {};                                   // bloque -> fila
+DATA.bloques.forEach((b, i) => BI[b] = i);
+
+const state = { per: '2-2026', q: '', sem: null, sel: [] };
+const cursos = () => IDX[state.per] || [];
+const byId = id => cursos().find(c => c.id === id);
+const elegidos = () => state.sel.map(byId).filter(Boolean);
+
+/* ---------- estado desde la URL o el navegador ---------- */
+(function leerHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  if (p.get('p') && IDX[p.get('p')]) state.per = p.get('p');
+  const guardado = store.get('sel:' + state.per);
+  const ids = p.get('c') ? p.get('c').split(',') : JSON.parse(guardado || '[]');
+  state.sel = ids.filter(id => cursos().some(c => c.id === id));
+})();
+
+function guardar() {
+  store.set('sel:' + state.per, JSON.stringify(state.sel));
+  const p = new URLSearchParams({ p: state.per });
+  if (state.sel.length) p.set('c', state.sel.join(','));
+  history.replaceState(null, '', '#' + p.toString());
+}
+
+/* ---------- ocupación y topes ---------- */
+function ocupacion(lista) {
+  const m = {};                                  // "DIA|bloque" -> [curso]
+  for (const c of lista)
+    for (const b of c.bloques) {
+      const k = b.dia + '|' + b.bloque;
+      (m[k] = m[k] || []).push({ c, sala: b.sala });
+    }
+  return m;
+}
+const choca = (c, m) =>
+  c.bloques.some(b => (m[b.dia + '|' + b.bloque] || []).some(x => x.c.id !== c.id));
+
+/* ---------- filtros ---------- */
+function pintarChips() {
+  const sems = [...new Set(cursos().map(c => c.semestre))].sort((a, b) => a - b);
+  document.getElementById('chips').innerHTML =
+    ['<button type="button" data-sem="" aria-pressed="' + (state.sem === null) + '">Todos</button>']
+      .concat(sems.map(s =>
+        `<button type="button" data-sem="${s}" aria-pressed="${state.sem === s}">${s}º sem.</button>`))
+      .join('');
+  document.querySelectorAll('#chips button').forEach(b => b.onclick = () => {
+    state.sem = b.dataset.sem === '' ? null : +b.dataset.sem;
+    pintar();
+  });
+}
+
+function filtrados() {
+  const t = norm(state.q).split(/\s+/).filter(Boolean);
+  return cursos().filter(c =>
+    (state.sem === null || c.semestre === state.sem) &&
+    t.every(w => c.busca.includes(w)));
+}
+
+/* ---------- lista de resultados ---------- */
+function fila(c, m, elegido) {
+  const cl = !elegido && choca(c, m) ? ' clash' : '';
+  const nota = c.nota ? `<span class="warnmark" title="${esc(c.nota)}">!</span>` : '';
+  const bl = c.bloques.length, cr = c.creditos == null ? '–' : c.creditos;
+  return `<button type="button" class="row${cl}" data-id="${c.id}" aria-pressed="${elegido}">
+    <span class="spine" style="background:${c.fuerte}"></span>
+    <span class="body">
+      <span class="name">${esc(c.nombre)}${c.seccion ? ' · ' + c.seccion : ''}${nota}</span>
+      <span class="meta num">${esc(c.codigo || 's/código')} · ${c.semestre}º sem. · ${cr} cr · ${bl} bl</span>
+      <span class="meta">${esc(c.profesor || 'profesor por confirmar')}</span>
+    </span>
+    <span class="tick">${elegido ? '✓' : '+'}</span>
+  </button>`;
+}
+
+function pintarResultados(m) {
+  const l = filtrados();
+  document.getElementById('results').innerHTML = l.length
+    ? l.map(c => fila(c, m, state.sel.includes(c.id))).join('')
+    : '<p class="empty">Ningún ramo coincide. Prueba con menos palabras o revisa el código.</p>';
+  document.querySelectorAll('#results .row').forEach(b => b.onclick = () => alternar(b.dataset.id));
+}
+
+function pintarElegidos(m) {
+  const l = elegidos();
+  document.getElementById('count').textContent =
+    l.length + (l.length === 1 ? ' ramo' : ' ramos');
+  document.getElementById('picked').innerHTML = l.length
+    ? l.map(c => `<div class="row">
+        <span class="spine" style="background:${c.fuerte}"></span>
+        <span class="body">
+          <span class="name">${esc(c.nombre)}${c.seccion ? ' · ' + c.seccion : ''}</span>
+          <span class="meta num">${esc(c.codigo || 's/código')} · ${c.creditos == null ? '–' : c.creditos} cr · ${c.cupos ? c.cupos + ' cupos' : 'cupos s/i'}</span>
+        </span>
+        <button type="button" class="del" data-id="${c.id}" aria-label="Quitar ${esc(c.nombre)}">×</button>
+      </div>`).join('')
+    : '<p class="empty">Busca un ramo arriba y tócalo para agregarlo.</p>';
+  document.querySelectorAll('#picked .del').forEach(b => b.onclick = () => alternar(b.dataset.id));
+
+  document.getElementById('tBlocks').textContent = l.reduce((a, c) => a + c.bloques.length, 0);
+  document.getElementById('tCred').textContent = l.reduce((a, c) => a + (c.creditos || 0), 0);
+
+  // topes
+  const topes = [];
+  for (const [k, arr] of Object.entries(m))
+    if (arr.length > 1) {
+      const [dia, bloque] = k.split('|');
+      topes.push(`${dia.toLowerCase()} ${bloque}: ` +
+        arr.map(x => x.c.nombre + (x.c.seccion ? ' ' + x.c.seccion : '')).join(' / '));
+    }
+  topes.sort();
+  // dos secciones del mismo ramo: error frecuente al inscribir
+  const porCodigo = {};
+  for (const c of l) if (c.codigo) (porCodigo[c.codigo] = porCodigo[c.codigo] || []).push(c);
+  const dobles = Object.entries(porCodigo).filter(([, v]) => v.length > 1)
+    .map(([cod, v]) => `${v[0].nombre} (${cod}): elegiste ${v.length} secciones, deja solo una`);
+
+  const MAX = 8;
+  const lista = topes.slice(0, MAX).map(esc)
+    .concat(topes.length > MAX ? [`… y ${topes.length - MAX} más`] : []);
+  let aviso = '';
+  if (dobles.length)
+    aviso += `<p class="alert"><b>Ramo repetido</b>${dobles.map(esc).join('<br>')}</p>`;
+  if (topes.length)
+    aviso += `<p class="alert"><b>${topes.length} ${topes.length === 1 ? 'tope' : 'topes'} de horario</b>${
+      lista.join('<br>')}</p>`;
+  document.getElementById('alert').innerHTML = aviso;
+}
+
+/* ---------- grilla ---------- */
+function pintarGrilla(m) {
+  const dias = DATA.dias, bloques = DATA.bloques;
+
+  // rowspan: fusiona bloques consecutivos con exactamente el mismo contenido
+  const span = {}, skip = {};
+  for (const dia of dias) {
+    let i = 0;
+    while (i < bloques.length) {
+      const firma = k => (m[dia + '|' + bloques[k]] || [])
+        .map(x => x.c.id + '@' + x.sala).sort().join(',');
+      const f = firma(i);
+      let j = i + 1;
+      if (f) while (j < bloques.length && firma(j) === f) j++;
+      if (j - i > 1) {
+        span[dia + '|' + i] = j - i;
+        for (let k = i + 1; k < j; k++) skip[dia + '|' + k] = true;
+      }
+      i = j;
+    }
+  }
+
+  let html = '<colgroup><col class="hcol">' +
+    dias.map(() => '<col>').join('') + '</colgroup>';
+  html += '<thead><tr><th>Hora</th>' +
+    dias.map(d => `<th>${d.charAt(0) + d.slice(1).toLowerCase()}</th>`).join('') +
+    '</tr></thead><tbody>';
+
+  bloques.forEach((b, i) => {
+    html += `<tr><td class="hora">${b.replace('-', '<br>')}</td>`;
+    for (const dia of dias) {
+      if (skip[dia + '|' + i]) continue;
+      const arr = m[dia + '|' + b] || [];
+      const rs = span[dia + '|' + i] ? ` rowspan="${span[dia + '|' + i]}"` : '';
+      if (!arr.length) { html += `<td class="slot free"${rs}></td>`; continue; }
+      const piezas = arr.map(({ c, sala }) =>
+        `<div class="blk" style="background:${c.tinte};border-left-color:${c.fuerte};color:${c.fuerte}">
+           <span class="n">${esc(c.nombre)}${c.seccion ? ' · ' + c.seccion : ''}</span>
+           <span class="s">${esc(sala ? 'Sala ' + sala : 'sala por asignar')}</span>
+         </div>`).join('');
+      html += `<td class="slot${arr.length > 1 ? ' dupe' : ''}"${rs}>` +
+        (arr.length > 1 ? `<div class="stack">${piezas}</div>` : piezas) + '</td>';
+    }
+    html += '</tr>';
+  });
+  document.getElementById('grid').innerHTML = html + '</tbody>';
+}
+
+/* ---------- ciclo principal ---------- */
+function alternar(id) {
+  state.sel = state.sel.includes(id) ? state.sel.filter(x => x !== id) : state.sel.concat(id);
+  pintar();
+}
+
+function pintar() {
+  document.querySelectorAll('.seg button').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.per === state.per));
+  const etiqueta = state.per.startsWith('1') ? 'Primer semestre 2026' : 'Segundo semestre 2026';
+  document.getElementById('perLabel').textContent = etiqueta;
+  document.getElementById('printTitle').textContent = 'Mi horario · ' + etiqueta;
+  document.getElementById('printMeta').textContent =
+    elegidos().map(c => (c.codigo || 's/c') + ' ' + c.nombre + (c.seccion ? ' ' + c.seccion : ''))
+      .join(' · ') || 'Sin ramos seleccionados';
+
+  const m = ocupacion(elegidos());
+  pintarChips();
+  pintarResultados(m);
+  pintarElegidos(m);
+  pintarGrilla(m);
+  guardar();
+}
+
+document.getElementById('q').addEventListener('input', e => {
+  state.q = e.target.value;
+  pintarResultados(ocupacion(elegidos()));
+});
+document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+  state.per = b.dataset.per;
+  state.sem = null;
+  state.sel = JSON.parse(store.get('sel:' + state.per) || '[]')
+    .filter(id => IDX[state.per].some(c => c.id === id));
+  pintar();
+});
+document.getElementById('btnPrint').onclick = () => window.print();
+document.getElementById('btnClear').onclick = () => {
+  if (!state.sel.length || confirm('¿Quitar todos los ramos del horario?')) {
+    state.sel = []; pintar();
+  }
+};
+document.getElementById('btnLink').onclick = async e => {
+  const b = e.currentTarget, t = b.textContent;
+  try { await navigator.clipboard.writeText(location.href); b.textContent = 'Enlace copiado'; }
+  catch { b.textContent = 'Copia la URL de la barra'; }
+  setTimeout(() => b.textContent = t, 2200);
+};
+
+pintar();
+</script>
+</body>
+</html>
