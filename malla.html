@@ -3,567 +3,424 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Malla interactiva · Ingeniería Comercial</title>
+<title>Malla curricular · Ingeniería Comercial · Universidad de Concepción</title>
+<meta name="description" content="Malla curricular interactiva de Ingeniería Comercial, Campus Los Ángeles, Universidad de Concepción. Plan 2014.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+  /* Colores institucionales UdeC — normasgraficas.udec.cl
+     Azul #223c6a (Pantone 541 C) · Amarillo #e69b0a (Pantone 130 C)
+     Rojo #d21428 (Pantone 485 C) · Gris #a0a0a0 (Cool Grey 6 C)      */
   :root{
-    --ink:#131a2b; --paper:#eceef3; --surface:#fff;
-    --rule:#c9d0dc; --rule-soft:#e3e7ee; --muted:#5f6879;
-    --accent:#1f3fd4; --ok:#0d6e5f; --ok-bg:#dcefea;
-    --warn:#b3162f; --warn-bg:#fdeaed; --lock:#8b93a5; --lock-bg:#f4f5f8;
-    --font:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --azul:#223c6a; --azul-osc:#182b4c; --azul-cla:#37589a; --azul-sua:#eaeef6;
+    --amarillo:#e69b0a; --amarillo-txt:#8a5d04; --amarillo-bg:#fdf3e0; --amarillo-bd:#f2d199;
+    --rojo:#d21428; --rojo-txt:#a80f1f; --rojo-bg:#fdeaec; --rojo-bd:#f0b3bb;
+    --gris:#a0a0a0; --gris-osc:#6b7280; --gris-bg:#f4f5f7;
+    --tinta:#1b2534; --texto:#4a5568; --linea:#e2e6ee; --papel:#f5f7fa; --blanco:#fff;
+    --tit:"Poppins","Segoe UI",-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+    --cuerpo:"Roboto","Segoe UI",-apple-system,BlinkMacSystemFont,Arial,sans-serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{font-family:var(--font); background:var(--paper); color:var(--ink);
-       font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased}
-  button{font-family:inherit; font-size:inherit; cursor:pointer}
-  :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-  .lbl{font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
-  .num{font-variant-numeric:tabular-nums}
+  body{font-family:var(--cuerpo); color:var(--tinta); font-size:14px; background:var(--papel);
+       -webkit-font-smoothing:antialiased; min-height:100vh}
+  button{font-family:inherit; cursor:pointer}
+  :focus-visible{outline:2px solid var(--azul-cla); outline-offset:2px}
 
-  .top{display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:13px 20px;
-       background:var(--ink); color:#fff}
-  .brand{font-weight:700; font-size:16px; margin-right:auto}
-  .brand span{display:block; font-size:10px; font-weight:600; letter-spacing:.14em;
-              text-transform:uppercase; color:#8b95ab; margin-top:1px}
-  .act{background:none; color:#c2cadb; border:1px solid #333c55; border-radius:6px;
-       padding:7px 12px; font-size:12px; font-weight:600}
-  .act:hover{color:#fff; border-color:#5d6785}
-  a.act{text-decoration:none; display:inline-block}
+  .page{max-width:1880px; margin:0 auto; padding:22px 28px 34px}
 
-  .wrap{display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:18px; padding:18px; align-items:start}
-  .card{background:var(--surface); border:1px solid var(--rule); border-radius:9px}
-  .card>header{padding:11px 14px; border-bottom:1px solid var(--rule-soft);
-               display:flex; align-items:center; justify-content:space-between; gap:10px}
-  .side{position:sticky; top:18px; display:flex; flex-direction:column; gap:14px}
+  /* ---------- encabezado ---------- */
+  .hero{display:flex; align-items:center; gap:26px; flex-wrap:wrap;
+        background:linear-gradient(102deg,var(--azul-osc) 0%,var(--azul) 55%,#2c4d86 100%);
+        border-radius:12px; padding:26px 32px; color:#fff}
+  .hero .tit{flex:1; min-width:270px}
+  .logo{height:46px; width:auto; display:block; margin-bottom:16px}
+  .logotxt{display:none; font-family:var(--tit); font-weight:600; font-size:15px;
+           letter-spacing:.04em; color:#fff; margin-bottom:14px}
+  .hero h1{margin:0; font-family:var(--tit); font-size:clamp(23px,2.9vw,35px);
+           font-weight:700; letter-spacing:.005em; line-height:1.12}
+  .hero .sub{margin:7px 0 0; font-family:var(--tit); font-size:12.5px; font-weight:500;
+             letter-spacing:.09em; text-transform:uppercase; color:#b9c6de}
+  .hero .barra-color{width:64px; height:3px; background:var(--amarillo);
+                     border-radius:2px; margin:15px 0 0}
 
-  /* ---------- aviso de datos ---------- */
-  .nota{margin:0; padding:10px 14px; background:#fff8e6; border-bottom:1px solid #f0e2bd;
-        font-size:12px; color:#6b551b}
-  .nota b{display:block; margin-bottom:2px}
-  .nota button{background:none; border:0; padding:0; color:#6b551b; font-weight:700;
-               text-decoration:underline; font-size:12px}
+  .panel{background:#ffffff1c; border:1px solid #ffffff2e; border-radius:10px;
+         padding:16px 20px; min-width:280px}
+  .panel .fila{display:flex; align-items:baseline; justify-content:space-between; gap:14px}
+  .panel .lb{font-family:var(--tit); font-size:10.5px; font-weight:600; letter-spacing:.15em;
+             text-transform:uppercase; color:#b9c6de}
+  .panel .pct{font-family:var(--tit); font-size:32px; font-weight:700; line-height:1;
+              font-variant-numeric:tabular-nums}
+  .panel .bar{height:5px; background:#ffffff2b; border-radius:99px; margin:12px 0 10px; overflow:hidden}
+  .panel .bar i{display:block; height:100%; width:0; background:var(--amarillo);
+                border-radius:99px; transition:width .35s ease}
+  .panel .datos{display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:#dbe3f2}
+  .panel .datos b{font-weight:700; color:#fff; font-variant-numeric:tabular-nums}
 
-  /* ---------- la malla ---------- */
-  .mallawrap{position:relative; overflow:auto; padding:14px}
-  .mallagrid{position:relative; display:grid; gap:8px 14px; min-width:1180px;
-             grid-template-columns:repeat(10, minmax(104px,1fr))}
-  .semhead{font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
-           color:var(--muted); text-align:center; padding-bottom:2px;
-           border-bottom:1px solid var(--rule); grid-row:1}
-  svg.arcos{position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:0}
+  /* ---------- leyenda ---------- */
+  .leyenda{display:flex; align-items:center; gap:8px 20px; flex-wrap:wrap;
+           background:var(--blanco); border:1px solid var(--linea); border-radius:10px;
+           padding:12px 18px; margin:14px 0 18px}
+  .leyenda .par{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--texto)}
+  .pill{font-family:var(--tit); background:var(--azul-sua); color:var(--azul); font-size:10.5px;
+        font-weight:600; padding:4px 10px; border-radius:5px; white-space:nowrap;
+        letter-spacing:.03em}
+  .dot{width:10px; height:10px; border-radius:2px; flex:none}
+  .leyenda .fin{margin-left:auto; display:flex; gap:7px}
+  .leyenda .fin button{font-family:var(--tit); background:none; border:1px solid var(--linea);
+    color:var(--gris-osc); border-radius:6px; padding:6px 12px; font-size:11.5px; font-weight:500}
+  .leyenda .fin button:hover{color:var(--azul); border-color:var(--azul-cla); background:var(--azul-sua)}
 
-  .ramo{position:relative; z-index:1; text-align:left; width:100%;
-        border:1px solid var(--rule); border-left:3px solid var(--rule);
-        border-radius:6px; background:var(--surface); padding:6px 8px;
-        min-height:56px; display:flex; flex-direction:column; justify-content:center;
-        transition:transform .12s ease, box-shadow .12s ease}
-  .ramo .nm{font-size:11.5px; font-weight:600; line-height:1.2}
-  .ramo .cd{font-size:9.5px; color:var(--muted); margin-top:2px; font-variant-numeric:tabular-nums}
-  .ramo:hover{transform:translateY(-1px); box-shadow:0 2px 8px #131a2b1f}
+  /* ---------- años ---------- */
+  .anios{display:grid; grid-template-columns:repeat(5,minmax(300px,1fr)); gap:14px}
+  .anio{background:var(--blanco); border:1px solid var(--linea); border-radius:11px;
+        padding:15px 13px 17px}
+  .anio h2{margin:0 0 12px; text-align:center; font-family:var(--tit); font-size:15px;
+           font-weight:600; color:var(--azul); padding-bottom:11px;
+           border-bottom:2px solid var(--azul-sua)}
+  .sems{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .sem h3{margin:0 0 9px; text-align:center; font-family:var(--tit); font-size:10.5px;
+          font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--azul);
+          background:var(--azul-sua); border-radius:5px; padding:6px 4px}
+  .sem .cajas{display:flex; flex-direction:column; gap:7px}
 
-  .ramo.aprobado{background:var(--ok-bg); border-color:#a8d4c9; border-left-color:var(--ok); color:var(--ok)}
-  .ramo.aprobado .cd{color:#4a8b7d}
-  .ramo.aprobado .nm::before{content:"✓ "; font-weight:700}
-  .ramo.disponible{border-color:var(--accent); border-left-color:var(--accent);
-                   box-shadow:inset 0 0 0 1px var(--accent)}
-  .ramo.bloqueado{background:var(--lock-bg); color:var(--lock); border-style:dashed;
-                  border-left-color:var(--lock)}
-  .ramo.bloqueado .cd{color:var(--lock)}
-  .ramo.electivo .nm{font-style:italic}
-  .ramo.sel{outline:2px solid var(--ink); outline-offset:1px}
-  .ramo.atenuado{opacity:.32}
-  @keyframes pulso{0%{box-shadow:0 0 0 0 #1f3fd455}70%{box-shadow:0 0 0 9px #1f3fd400}100%{box-shadow:0 0 0 0 #1f3fd400}}
-  .ramo.nuevo{animation:pulso .7s ease-out 2}
+  /* ---------- tarjeta ---------- */
+  .ramo{position:relative; display:block; width:100%; text-align:left; background:var(--blanco);
+        border:1px solid var(--linea); border-left:3px solid var(--linea); border-radius:7px;
+        padding:8px 9px 19px; transition:transform .12s, box-shadow .12s, opacity .18s;
+        -webkit-tap-highlight-color:transparent}
+  .ramo .top{display:flex; align-items:flex-start; justify-content:space-between; gap:6px}
+  .ramo .cod{font-size:10px; font-weight:700; color:var(--gris);
+             font-variant-numeric:tabular-nums; letter-spacing:.03em}
+  .ramo .cr{font-family:var(--tit); font-size:9.5px; font-weight:600; color:var(--gris-osc);
+            background:var(--gris-bg); border-radius:4px; padding:2px 5px; white-space:nowrap}
+  .ramo .nom{margin-top:5px; font-size:12.5px; font-weight:500; line-height:1.25; color:var(--texto)}
+  .ramo .pin{position:absolute; right:8px; bottom:6px; min-width:14px; height:14px; padding:0 3px;
+             border:1px solid var(--linea); border-radius:3px; display:flex; align-items:center;
+             justify-content:center; font-size:8px; font-weight:700; color:var(--gris);
+             background:var(--blanco); font-variant-numeric:tabular-nums}
+  .ramo:hover{transform:translateY(-2px); box-shadow:0 4px 12px #1b253421}
 
-  /* ---------- panel ---------- */
-  .prog{padding:12px 14px}
-  .barra{height:7px; background:var(--rule-soft); border-radius:99px; overflow:hidden; margin:7px 0 4px}
-  .barra i{display:block; height:100%; background:var(--ok); border-radius:99px; transition:width .25s}
-  .cifras{display:flex; justify-content:space-between; font-size:12px; color:var(--muted)}
-  .cifras b{color:var(--ink); font-variant-numeric:tabular-nums}
+  .ramo.disp{border-left-color:var(--azul-cla)}
+  .ramo.disp .nom{color:var(--tinta); font-weight:500}
+  .ramo.bloq{opacity:.68}
 
-  .lista{max-height:30vh; overflow:auto}
-  .item{display:flex; gap:8px; width:100%; text-align:left; background:none; border:0;
-        border-bottom:1px solid var(--rule-soft); padding:8px 14px; align-items:flex-start}
-  .item:hover{background:#f5f7fb}
-  .item .pt{width:3px; align-self:stretch; border-radius:2px; background:var(--accent); flex:none}
-  .item .nm{font-size:12.5px; font-weight:600; line-height:1.25}
-  .item .mt{font-size:10.5px; color:var(--muted); margin-top:1px}
-  .vacio{padding:16px 14px; color:var(--muted); font-size:12.5px}
+  .ramo.aprob{background:var(--gris-bg); border-color:#dcdfe5; border-left-color:var(--gris)}
+  .ramo.aprob .nom{color:var(--gris-osc); text-decoration:line-through;
+                   text-decoration-thickness:1.5px; text-decoration-color:var(--gris)}
+  .ramo.aprob .pin{background:var(--gris); border-color:var(--gris); color:#fff}
 
-  .det{padding:12px 14px}
-  .det h3{margin:0 0 2px; font-size:14px}
-  .det .sub{font-size:11px; color:var(--muted); margin-bottom:10px; font-variant-numeric:tabular-nums}
-  .det h4{margin:12px 0 5px; font-size:10px; font-weight:700; letter-spacing:.12em;
-          text-transform:uppercase; color:var(--muted)}
-  .req{display:flex; align-items:center; gap:6px; padding:4px 0; font-size:12.5px;
-       border-bottom:1px solid var(--rule-soft)}
-  .req .est{flex:none; font-size:11px; font-weight:700; width:15px; text-align:center}
-  .req .tx{flex:1; min-width:0}
-  .req .x{border:0; background:none; color:var(--muted); font-size:15px; line-height:1; padding:0 2px}
-  .req .x:hover{color:var(--warn)}
-  .badge{font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-         padding:1px 5px; border-radius:3px; flex:none}
-  .b-alta{background:var(--ok-bg); color:var(--ok)}
-  .b-media{background:#eef1f7; color:var(--muted)}
-  .b-revisar{background:var(--warn-bg); color:var(--warn)}
-  .add{display:flex; gap:5px; margin-top:8px}
-  .add select{flex:1; min-width:0; font:inherit; font-size:12px; padding:5px;
-              border:1px solid var(--rule); border-radius:5px; background:#fbfcfe; color:var(--ink)}
-  .add button{border:1px solid var(--accent); background:var(--accent); color:#fff;
-              border-radius:5px; padding:5px 10px; font-size:12px; font-weight:600}
-  .ayuda{font-size:11px; color:var(--muted); margin:8px 0 0}
+  .ramo.sel{background:var(--azul); border-color:var(--azul); border-left-color:var(--amarillo);
+            box-shadow:0 5px 16px #223c6a52}
+  .ramo.sel .nom{color:#fff; font-weight:500; text-decoration:none}
+  .ramo.sel .cod{color:#b9c6de}
+  .ramo.sel .cr{background:#ffffff26; color:#fff}
+  .ramo.sel .pin{background:#ffffff26; border-color:#ffffff4d; color:#fff}
 
-  dialog{border:1px solid var(--rule); border-radius:10px; padding:0; max-width:620px; width:92%;
-         box-shadow:0 18px 50px #131a2b40}
-  dialog::backdrop{background:#131a2b66}
-  dialog header{padding:13px 16px; border-bottom:1px solid var(--rule-soft);
-                display:flex; justify-content:space-between; align-items:center}
-  dialog header h2{margin:0; font-size:15px}
-  dialog .cuerpo{padding:14px 16px; max-height:62vh; overflow:auto; font-size:13px}
-  dialog .cuerpo p{margin:0 0 10px}
-  dialog table{border-collapse:collapse; width:100%; font-size:12px; margin-bottom:14px}
-  dialog th{text-align:left; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
-            color:var(--muted); border-bottom:1px solid var(--rule); padding:4px 6px}
-  dialog td{border-bottom:1px solid var(--rule-soft); padding:4px 6px; vertical-align:top}
-  dialog .cerrar{border:1px solid var(--rule); background:#fff; border-radius:6px;
-                 padding:5px 11px; font-size:12px; font-weight:600}
+  .ramo.req{background:var(--rojo-bg); border-color:var(--rojo-bd); border-left-color:var(--rojo)}
+  .ramo.req .nom{color:var(--rojo-txt); text-decoration:none}
+  .ramo.req .cod{color:#c98d95}
+  .ramo.req .cr{background:#fad7dc; color:var(--rojo-txt)}
+  .ramo.req .pin{border-color:var(--rojo-bd); color:var(--rojo-txt); background:var(--rojo-bg)}
 
-  @media (max-width:1000px){
-    .wrap{grid-template-columns:1fr}
-    .side{position:static}
+  .ramo.abre{background:var(--amarillo-bg); border-color:var(--amarillo-bd);
+             border-left-color:var(--amarillo)}
+  .ramo.abre .nom{color:var(--amarillo-txt); text-decoration:none}
+  .ramo.abre .cod{color:#c0a367}
+  .ramo.abre .cr{background:#f8e6c2; color:var(--amarillo-txt)}
+  .ramo.abre .pin{border-color:var(--amarillo-bd); color:var(--amarillo-txt); background:var(--amarillo-bg)}
+
+  .hayfoco .ramo:not(.sel):not(.req):not(.abre){opacity:.3}
+  .ramo.electivo .nom{font-style:italic}
+
+  /* ---------- pie ---------- */
+  .pie{margin-top:24px; padding-top:16px; border-top:1px solid var(--linea);
+       display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+       font-size:11.5px; color:var(--gris-osc)}
+  .pie .marca{font-family:var(--tit); font-weight:500; color:var(--azul)}
+
+  /* ---------- diálogo ---------- */
+  dialog{border:0; border-radius:11px; padding:0; max-width:640px; width:92%;
+         box-shadow:0 20px 60px #1b253452}
+  dialog::backdrop{background:#1b253480}
+  dialog header{padding:16px 22px; background:var(--azul); color:#fff;
+                display:flex; justify-content:space-between; align-items:center; gap:12px}
+  dialog header h2{margin:0; font-family:var(--tit); font-size:15px; font-weight:600}
+  dialog header button{background:#ffffff26; border:1px solid #ffffff40; color:#fff;
+                       border-radius:6px; padding:5px 12px; font-size:12px; font-weight:500}
+  dialog .cuerpo{padding:18px 22px; max-height:64vh; overflow:auto; font-size:13px; line-height:1.5}
+  dialog table{border-collapse:collapse; width:100%; font-size:12.5px}
+  dialog th{text-align:left; font-family:var(--tit); font-size:10px; letter-spacing:.1em;
+            text-transform:uppercase; color:var(--gris-osc);
+            border-bottom:2px solid var(--azul-sua); padding:6px 7px}
+  dialog td{border-bottom:1px solid #eef0f4; padding:7px 7px; vertical-align:top}
+  dialog td.ramoq{font-weight:500; color:var(--tinta)}
+  dialog .sem-sep td{background:var(--azul-sua); font-family:var(--tit); font-size:10px;
+                     font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+                     color:var(--azul); padding:5px 7px}
+
+  @media (max-width:1500px){
+    .anios{grid-template-columns:repeat(5,300px); overflow-x:auto; padding-bottom:8px}
+  }
+  @media (max-width:760px){
+    .page{padding:14px 12px 26px}
+    .hero{padding:22px}
+    .panel{min-width:0; width:100%}
+    .leyenda .fin{margin-left:0; width:100%; justify-content:center}
   }
   @media print{
-    .top,.side,.nota{display:none}
-    .wrap{display:block; padding:0}
-    .card{border:0}
-    .card>header{display:none}
-    .mallawrap{overflow:visible; padding:0}
-    .mallagrid{min-width:0}
-    .ramo{min-height:44px}
-    @page{size:landscape; margin:10mm}
+    body{background:#fff}
+    .leyenda .fin{display:none}
+    .hero{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .anios{grid-template-columns:repeat(5,1fr); overflow:visible}
+    .ramo:hover{transform:none; box-shadow:none}
+    @page{size:landscape; margin:8mm}
   }
 </style>
 </head>
 <body>
+<div class="page">
 
-<div class="top">
-  <div class="brand">Malla interactiva<span>Ingeniería Comercial · Plan 2014</span></div>
-  <button type="button" class="act" id="btnDatos">Ver prerrequisitos</button>
-  <a class="act" href="index.html">Ver horario</a>
-  <button type="button" class="act" id="btnPrint">Imprimir</button>
-  <button type="button" class="act" id="btnClear">Vaciar</button>
-</div>
-
-<div class="wrap">
-  <div class="card">
-    <header>
-      <span class="lbl">Toca un ramo para marcarlo o desmarcarlo como aprobado</span>
-      <span class="lbl" id="leyenda"></span>
-    </header>
-    <p class="nota" id="nota"></p>
-    <div class="mallawrap">
-      <div class="mallagrid" id="malla"><svg class="arcos" id="arcos"></svg></div>
+  <header class="hero">
+    <div class="tit">
+      <!-- Logo oficial: descargar de normasgraficas.udec.cl (versión horizontal
+           negativa, SVG) y guardarlo junto a este archivo como logo-udec.svg -->
+      <img class="logo" src="logo-udec.svg" alt="Universidad de Concepción"
+           onerror="this.remove();document.getElementById('logotxt').style.display='block'">
+      <span class="logotxt" id="logotxt">Universidad de Concepción</span>
+      <h1>Malla curricular · Ingeniería Comercial</h1>
+      <p class="sub">Campus Los Ángeles · Plan 2014</p>
+      <div class="barra-color"></div>
     </div>
-  </div>
-
-  <div class="side">
-    <div class="card">
-      <header><span class="lbl">Mi avance</span></header>
-      <div class="prog">
-        <div class="barra"><i id="barra" style="width:0%"></i></div>
-        <div class="cifras">
-          <span>Créditos <b id="cCred">0</b> / <span class="num" id="cCredTot"></span></span>
-          <span>Ramos <b id="cRamos">0</b> / <span class="num" id="cRamosTot"></span></span>
-        </div>
+    <div class="panel">
+      <div class="fila"><span class="lb">Avance académico</span><span class="pct" id="pct">0%</span></div>
+      <div class="bar"><i id="bar"></i></div>
+      <div class="datos">
+        <span><b id="cr">0</b> / <span id="crTot">0</span> créditos</span>
+        <span><b id="nr">0</b> / <span id="nrTot">0</span> ramos</span>
+        <span><b id="nd">0</b> por tomar</span>
       </div>
     </div>
+  </header>
 
-    <div class="card">
-      <header>
-        <span class="lbl">Puedo tomar ahora</span>
-        <span class="lbl num" id="cDisp">0</span>
-      </header>
-      <div class="lista" id="disponibles"></div>
-    </div>
-
-    <div class="card">
-      <header><span class="lbl">Detalle</span></header>
-      <div class="det" id="detalle"></div>
+  <div class="leyenda">
+    <div class="par"><span class="pill">Clic izquierdo</span> Ver prerrequisitos y ramos que desbloquea</div>
+    <div class="par"><span class="pill">Clic derecho</span> Aprobar o desmarcar</div>
+    <div class="par"><span class="dot" style="background:var(--azul)"></span>Seleccionado</div>
+    <div class="par"><span class="dot" style="background:var(--rojo)"></span>Prerrequisito</div>
+    <div class="par"><span class="dot" style="background:var(--amarillo)"></span>Desbloquea</div>
+    <div class="par"><span class="dot" style="background:var(--gris)"></span>Aprobado</div>
+    <div class="fin">
+      <button type="button" id="bPre">Prerrequisitos</button>
+      <button type="button" id="bImp">Imprimir</button>
+      <button type="button" id="bVac">Vaciar</button>
     </div>
   </div>
+
+  <div class="anios" id="anios"></div>
+
+  <footer class="pie">
+    <span class="marca">Universidad de Concepción · Campus Los Ángeles</span>
+    <span>Malla curricular Ingeniería Comercial, plan 2014. Los ramos que marques
+      quedan guardados en este navegador.</span>
+  </footer>
 </div>
 
 <dialog id="dlg">
-  <header>
-    <h2>Prerrequisitos: de dónde salen</h2>
-    <button type="button" class="cerrar" id="dlgX">Cerrar</button>
-  </header>
-  <div class="cuerpo" id="dlgCuerpo"></div>
+  <header><h2>Prerrequisitos de la carrera</h2>
+    <button type="button" id="dlgX">Cerrar</button></header>
+  <div class="cuerpo" id="dlgC"></div>
 </dialog>
 
 <script>
 /* =====================================================================
-   MALLA INTERACTIVA — INGENIERÍA COMERCIAL, PLAN 2014
-   Archivo único, sin dependencias ni servidor.
+   MALLA CURRICULAR INTERACTIVA — INGENIERÍA COMERCIAL, PLAN 2014
+   Campus Los Ángeles, Universidad de Concepción.
 
-   IMPORTANTE SOBRE LOS PRERREQUISITOS
-   La malla oficial (tanto el Excel de la Escuela como el PDF publicado)
-   NO trae los prerrequisitos escritos: están solo dibujados como flechas.
-   Las relaciones de abajo se reconstruyeron midiendo esas flechas, así que
-   son un BORRADOR con nivel de confianza declarado en cada una.
-   Cada relación trae confianza "alta", "media" o "revisar".
-   Corrígelas en la propia página y usa "Descargar prerrequisitos" para
-   dejar la versión definitiva dentro de este archivo.
+   Archivo único: no necesita servidor, internet ni instalación.
+   Identidad gráfica según normasgraficas.udec.cl
+   Para corregir un prerrequisito, edita el bloque PREREQ de más abajo.
    ===================================================================== */
 
-const MALLA = {"ramos": [{"codigo": "451827", "nombre": "Algebra I", "semestre": 1, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451825", "nombre": "Cálculo I", "semestre": 1, "banda": 1, "creditos": 5, "electivo": false}, {"codigo": "451826", "nombre": "Economía I", "semestre": 1, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451824", "nombre": "Gestión de Empresas", "semestre": 1, "banda": 4, "creditos": 5, "electivo": false}, {"codigo": "451828", "nombre": "Derecho Corporativo I", "semestre": 1, "banda": 7, "creditos": 3, "electivo": false}, {"codigo": "451832", "nombre": "Algebra II", "semestre": 2, "banda": 0, "creditos": 5, "electivo": false}, {"codigo": "451831", "nombre": "Cálculo II", "semestre": 2, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451833", "nombre": "Economía II", "semestre": 2, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451829", "nombre": "Gestión de Personas I", "semestre": 2, "banda": 4, "creditos": 3, "electivo": false}, {"codigo": "451830", "nombre": "Contabilidad I", "semestre": 2, "banda": 6, "creditos": 5, "electivo": false}, {"codigo": "451837", "nombre": "Estadística I", "semestre": 3, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451834", "nombre": "Cálculo III", "semestre": 3, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451836", "nombre": "Microeconomía I", "semestre": 3, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451835", "nombre": "Contabilidad II", "semestre": 3, "banda": 6, "creditos": 5, "electivo": false}, {"codigo": "451839", "nombre": "Formación General I", "semestre": 3, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451838", "nombre": "Tecnologías de Información I", "semestre": 3, "banda": 9, "creditos": 2, "electivo": false}, {"codigo": "451844", "nombre": "Estadística II", "semestre": 4, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451840", "nombre": "Macroeconomía I", "semestre": 4, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451841", "nombre": "Cálculo Financiero", "semestre": 4, "banda": 3, "creditos": 3, "electivo": false}, {"codigo": "451843", "nombre": "Contabilidad de Costos", "semestre": 4, "banda": 6, "creditos": 4, "electivo": false}, {"codigo": "451868", "nombre": "Inglés Comunic. I Nivel Principiante", "semestre": 4, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451842", "nombre": "Tecnologías de Información II", "semestre": 4, "banda": 9, "creditos": 3, "electivo": false}, {"codigo": "451849", "nombre": "Métodos Cuantitativos", "semestre": 5, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451848", "nombre": "Microeconomía II", "semestre": 5, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451845", "nombre": "Finanzas I", "semestre": 5, "banda": 3, "creditos": 4, "electivo": false}, {"codigo": "451846", "nombre": "Gestión de Marketing I", "semestre": 5, "banda": 5, "creditos": 4, "electivo": false}, {"codigo": "451847", "nombre": "Derecho Corporativo II", "semestre": 5, "banda": 7, "creditos": 3, "electivo": false}, {"codigo": "451869", "nombre": "Inglés Comunic. II Nivel Elemental", "semestre": 5, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451852", "nombre": "Econometría I", "semestre": 6, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451851", "nombre": "Gestión de Operaciones", "semestre": 6, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451853", "nombre": "Macroeconomía II", "semestre": 6, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451850", "nombre": "Finanzas II", "semestre": 6, "banda": 3, "creditos": 4, "electivo": false}, {"codigo": "451854", "nombre": "Administración Estratégica I", "semestre": 6, "banda": 6, "creditos": 4, "electivo": false}, {"codigo": "451870", "nombre": "Inglés Comunic. III Nivel Básico", "semestre": 6, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451855", "nombre": "Evaluación de Proyectos", "semestre": 7, "banda": 3, "creditos": 4, "electivo": false}, {"codigo": "451858", "nombre": "Gestión de Personas II", "semestre": 7, "banda": 4, "creditos": 4, "electivo": false}, {"codigo": "451857", "nombre": "Gestión de Marketing II", "semestre": 7, "banda": 5, "creditos": 4, "electivo": false}, {"codigo": "ELEC-7-1", "nombre": "Electivo de Licenciatura", "semestre": 7, "banda": 7, "creditos": 4, "electivo": true}, {"codigo": "451871", "nombre": "Inglés Comunic. IV Nivel Básico Alto", "semestre": 7, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "ELEC-7-2", "nombre": "Complementario", "semestre": 7, "banda": 9, "creditos": 2, "electivo": true}, {"codigo": "451862", "nombre": "Met. de la Investigación en Administración", "semestre": 8, "banda": 1, "creditos": 5, "electivo": false}, {"codigo": "ELEC-8-1", "nombre": "Electivo de Licenciatura", "semestre": 8, "banda": 3, "creditos": 4, "electivo": true}, {"codigo": "ELEC-8-2", "nombre": "Electivo de Licenciatura", "semestre": 8, "banda": 4, "creditos": 4, "electivo": true}, {"codigo": "ELEC-8-3", "nombre": "Electivo de Licenciatura", "semestre": 8, "banda": 5, "creditos": 4, "electivo": true}, {"codigo": "451861", "nombre": "Administración Estratégica II", "semestre": 8, "banda": 6, "creditos": 5, "electivo": false}, {"codigo": "ELEC-9-1", "nombre": "Electivo Profesional", "semestre": 9, "banda": 2, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-2", "nombre": "Electivo Profesional", "semestre": 9, "banda": 3, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-3", "nombre": "Electivo Profesional", "semestre": 9, "banda": 4, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-4", "nombre": "Electivo Profesional", "semestre": 9, "banda": 5, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-5", "nombre": "Electivo Profesional", "semestre": 9, "banda": 6, "creditos": 4, "electivo": true}, {"codigo": "451866", "nombre": "Trabajo Profesional en Administración", "semestre": 10, "banda": 1, "creditos": 10, "electivo": false}, {"codigo": "ELEC-10-1", "nombre": "Electivo Profesional", "semestre": 10, "banda": 2, "creditos": 4, "electivo": true}, {"codigo": "ELEC-10-2", "nombre": "Electivo Profesional", "semestre": 10, "banda": 3, "creditos": 4, "electivo": true}, {"codigo": "ELEC-10-3", "nombre": "Electivo Profesional", "semestre": 10, "banda": 4, "creditos": 4, "electivo": true}], "huecos": [{"de": "451829", "a": "451858", "nota": "secuencia evidente sin flecha detectada"}, {"de": "451836", "a": "451848", "nota": "secuencia evidente sin flecha detectada"}, {"de": "451840", "a": "451853", "nota": "secuencia evidente sin flecha detectada"}]};
+const RAMOS = [{"codigo": "451827", "nombre": "Álgebra I", "semestre": 1, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451825", "nombre": "Cálculo I", "semestre": 1, "banda": 1, "creditos": 5, "electivo": false}, {"codigo": "451826", "nombre": "Economía I", "semestre": 1, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451824", "nombre": "Gestión de Empresas", "semestre": 1, "banda": 4, "creditos": 5, "electivo": false}, {"codigo": "451828", "nombre": "Derecho Corporativo I", "semestre": 1, "banda": 7, "creditos": 3, "electivo": false}, {"codigo": "451832", "nombre": "Álgebra II", "semestre": 2, "banda": 0, "creditos": 5, "electivo": false}, {"codigo": "451831", "nombre": "Cálculo II", "semestre": 2, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451833", "nombre": "Economía II", "semestre": 2, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451829", "nombre": "Gestión de Personas I", "semestre": 2, "banda": 4, "creditos": 3, "electivo": false}, {"codigo": "451830", "nombre": "Contabilidad I", "semestre": 2, "banda": 6, "creditos": 5, "electivo": false}, {"codigo": "451837", "nombre": "Estadística I", "semestre": 3, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451834", "nombre": "Cálculo III", "semestre": 3, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451836", "nombre": "Microeconomía I", "semestre": 3, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451835", "nombre": "Contabilidad II", "semestre": 3, "banda": 6, "creditos": 5, "electivo": false}, {"codigo": "451839", "nombre": "Formación General I", "semestre": 3, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451838", "nombre": "Tecnologías de Información I", "semestre": 3, "banda": 9, "creditos": 2, "electivo": false}, {"codigo": "451844", "nombre": "Estadística II", "semestre": 4, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451840", "nombre": "Macroeconomía I", "semestre": 4, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451841", "nombre": "Cálculo Financiero", "semestre": 4, "banda": 3, "creditos": 3, "electivo": false}, {"codigo": "451843", "nombre": "Contabilidad de Costos", "semestre": 4, "banda": 6, "creditos": 4, "electivo": false}, {"codigo": "451868", "nombre": "Inglés Comunic. I Nivel Principiante", "semestre": 4, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451842", "nombre": "Tecnologías de Información II", "semestre": 4, "banda": 9, "creditos": 3, "electivo": false}, {"codigo": "451849", "nombre": "Métodos Cuantitativos", "semestre": 5, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451848", "nombre": "Microeconomía II", "semestre": 5, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451845", "nombre": "Finanzas I", "semestre": 5, "banda": 3, "creditos": 4, "electivo": false}, {"codigo": "451846", "nombre": "Gestión de Marketing I", "semestre": 5, "banda": 5, "creditos": 4, "electivo": false}, {"codigo": "451847", "nombre": "Derecho Corporativo II", "semestre": 5, "banda": 7, "creditos": 3, "electivo": false}, {"codigo": "451869", "nombre": "Inglés Comunic. II Nivel Elemental", "semestre": 5, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451852", "nombre": "Econometría I", "semestre": 6, "banda": 0, "creditos": 4, "electivo": false}, {"codigo": "451851", "nombre": "Gestión de Operaciones", "semestre": 6, "banda": 1, "creditos": 4, "electivo": false}, {"codigo": "451853", "nombre": "Macroeconomía II", "semestre": 6, "banda": 2, "creditos": 4, "electivo": false}, {"codigo": "451850", "nombre": "Finanzas II", "semestre": 6, "banda": 3, "creditos": 4, "electivo": false}, {"codigo": "451854", "nombre": "Administración Estratégica I", "semestre": 6, "banda": 6, "creditos": 4, "electivo": false}, {"codigo": "451870", "nombre": "Inglés Comunic. III Nivel Básico", "semestre": 6, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "451855", "nombre": "Evaluación de Proyectos", "semestre": 7, "banda": 3, "creditos": 4, "electivo": false}, {"codigo": "451858", "nombre": "Gestión de Personas II", "semestre": 7, "banda": 4, "creditos": 4, "electivo": false}, {"codigo": "451857", "nombre": "Gestión de Marketing II", "semestre": 7, "banda": 5, "creditos": 4, "electivo": false}, {"codigo": "ELEC-7-1", "nombre": "Electivo de Licenciatura", "semestre": 7, "banda": 7, "creditos": 4, "electivo": true}, {"codigo": "451871", "nombre": "Inglés Comunic. IV Nivel Básico Alto", "semestre": 7, "banda": 8, "creditos": 3, "electivo": false}, {"codigo": "ELEC-7-2", "nombre": "Complementario", "semestre": 7, "banda": 9, "creditos": 2, "electivo": true}, {"codigo": "451862", "nombre": "Met. de la Investigación en Administración", "semestre": 8, "banda": 1, "creditos": 5, "electivo": false}, {"codigo": "ELEC-8-1", "nombre": "Electivo de Licenciatura", "semestre": 8, "banda": 3, "creditos": 4, "electivo": true}, {"codigo": "ELEC-8-2", "nombre": "Electivo de Licenciatura", "semestre": 8, "banda": 4, "creditos": 4, "electivo": true}, {"codigo": "ELEC-8-3", "nombre": "Electivo de Licenciatura", "semestre": 8, "banda": 5, "creditos": 4, "electivo": true}, {"codigo": "451861", "nombre": "Administración Estratégica II", "semestre": 8, "banda": 6, "creditos": 5, "electivo": false}, {"codigo": "ELEC-9-1", "nombre": "Electivo Profesional", "semestre": 9, "banda": 2, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-2", "nombre": "Electivo Profesional", "semestre": 9, "banda": 3, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-3", "nombre": "Electivo Profesional", "semestre": 9, "banda": 4, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-4", "nombre": "Electivo Profesional", "semestre": 9, "banda": 5, "creditos": 4, "electivo": true}, {"codigo": "ELEC-9-5", "nombre": "Electivo Profesional", "semestre": 9, "banda": 6, "creditos": 4, "electivo": true}, {"codigo": "451866", "nombre": "Trabajo Profesional en Administración", "semestre": 10, "banda": 1, "creditos": 10, "electivo": false}, {"codigo": "ELEC-10-1", "nombre": "Electivo Profesional", "semestre": 10, "banda": 2, "creditos": 4, "electivo": true}, {"codigo": "ELEC-10-2", "nombre": "Electivo Profesional", "semestre": 10, "banda": 3, "creditos": 4, "electivo": true}, {"codigo": "ELEC-10-3", "nombre": "Electivo Profesional", "semestre": 10, "banda": 4, "creditos": 4, "electivo": true}];
 
-/* =====================================================================
-   PRERREQUISITOS — REEMPLAZA SOLO ESTE BLOQUE
-   Cuando la Escuela confirme la lista, corrígela en la propia página
-   (panel "Detalle"), presiona "Descargar prerrequisitos" y pega aquí el
-   contenido del archivo, entre los corchetes de abajo.
-   ===================================================================== */
+/* ---- PRERREQUISITOS: reemplaza solo lo que va entre los corchetes ---- */
 const PREREQ = [
-  {"de": "451827", "a": "451832", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Algebra I -> Algebra II
-  {"de": "451825", "a": "451831", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Cálculo I -> Cálculo II
-  {"de": "451826", "a": "451833", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Economía I -> Economía II
-  {"de": "451824", "a": "451829", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Gestión de Empresas -> Gestión de Personas I
-  {"de": "451830", "a": "451835", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Contabilidad I -> Contabilidad II
-  {"de": "451831", "a": "451834", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Cálculo II -> Cálculo III
-  {"de": "451830", "a": "451843", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Contabilidad I -> Contabilidad de Costos
-  {"de": "451826", "a": "451841", "confianza": "revisar", "razon": "la flecha cruza de banda; puede estar mal leida"},   // Economía I -> Cálculo Financiero
-  {"de": "451837", "a": "451844", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Estadística I -> Estadística II
-  {"de": "451838", "a": "451842", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Tecnologías de Información I -> Tecnologías de Información II
-  {"de": "451828", "a": "451847", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Derecho Corporativo I -> Derecho Corporativo II
-  {"de": "451841", "a": "451845", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Cálculo Financiero -> Finanzas I
-  {"de": "451824", "a": "451846", "confianza": "revisar", "razon": "la flecha cruza de banda; puede estar mal leida"},   // Gestión de Empresas -> Gestión de Marketing I
-  {"de": "451868", "a": "451869", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Inglés Comunic. I Nivel Principiante -> Inglés Comunic. II Nivel Elemental
-  {"de": "451832", "a": "451849", "confianza": "revisar", "razon": "la flecha cruza de banda; puede estar mal leida"},   // Algebra II -> Métodos Cuantitativos
-  {"de": "451844", "a": "451852", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Estadística II -> Econometría I
-  {"de": "451845", "a": "451850", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Finanzas I -> Finanzas II
-  {"de": "451849", "a": "451851", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Métodos Cuantitativos -> Gestión de Operaciones
-  {"de": "451869", "a": "451870", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Inglés Comunic. II Nivel Elemental -> Inglés Comunic. III Nivel Básico
-  {"de": "451836", "a": "451853", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Microeconomía I -> Macroeconomía II
-  {"de": "451840", "a": "451855", "confianza": "revisar", "razon": "la flecha cruza de banda; puede estar mal leida"},   // Macroeconomía I -> Evaluación de Proyectos
-  {"de": "451845", "a": "451855", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Finanzas I -> Evaluación de Proyectos
-  {"de": "451846", "a": "451857", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Gestión de Marketing I -> Gestión de Marketing II
-  {"de": "451854", "a": "451858", "confianza": "revisar", "razon": "la flecha cruza de banda; puede estar mal leida"},   // Administración Estratégica I -> Gestión de Personas II
-  {"de": "451870", "a": "451871", "confianza": "media", "razon": "misma banda horizontal de la malla"},   // Inglés Comunic. III Nivel Básico -> Inglés Comunic. IV Nivel Básico Alto
-  {"de": "451854", "a": "451861", "confianza": "alta", "razon": "secuencia del mismo ramo (I -> II)"},   // Administración Estratégica I -> Administración Estratégica II
-  {"de": "451854", "a": "451862", "confianza": "revisar", "razon": "la flecha cruza de banda; puede estar mal leida"},   // Administración Estratégica I -> Met. de la Investigación en Administración
-  {"de": "451862", "a": "451866", "confianza": "media", "razon": "misma banda horizontal de la malla"}   // Met. de la Investigación en Administración -> Trabajo Profesional en Administración
+  {"de": "451825", "a": "451831", "fuente": "flecha"},   // Cálculo I -> Cálculo II
+  {"de": "451826", "a": "451833", "fuente": "confirmada"},   // Economía I -> Economía II
+  {"de": "451824", "a": "451829", "fuente": "flecha"},   // Gestión de Empresas -> Gestión de Personas I
+  {"de": "451827", "a": "451832", "fuente": "flecha"},   // Álgebra I -> Álgebra II
+  {"de": "451830", "a": "451835", "fuente": "flecha"},   // Contabilidad I -> Contabilidad II
+  {"de": "451831", "a": "451834", "fuente": "flecha"},   // Cálculo II -> Cálculo III
+  {"de": "451831", "a": "451837", "fuente": "confirmada"},   // Cálculo II -> Estadística I
+  {"de": "451832", "a": "451837", "fuente": "confirmada"},   // Álgebra II -> Estadística I
+  {"de": "451826", "a": "451836", "fuente": "confirmada"},   // Economía I -> Microeconomía I
+  {"de": "451830", "a": "451843", "fuente": "flecha"},   // Contabilidad I -> Contabilidad de Costos
+  {"de": "451831", "a": "451841", "fuente": "confirmada"},   // Cálculo II -> Cálculo Financiero
+  {"de": "451837", "a": "451844", "fuente": "flecha"},   // Estadística I -> Estadística II
+  {"de": "451833", "a": "451840", "fuente": "confirmada"},   // Economía II -> Macroeconomía I
+  {"de": "451838", "a": "451842", "fuente": "flecha"},   // Tecnologías de Información I -> Tecnologías de Información II
+  {"de": "451828", "a": "451847", "fuente": "flecha"},   // Derecho Corporativo I -> Derecho Corporativo II
+  {"de": "451841", "a": "451845", "fuente": "flecha"},   // Cálculo Financiero -> Finanzas I
+  {"de": "451824", "a": "451846", "fuente": "flecha"},   // Gestión de Empresas -> Gestión de Marketing I
+  {"de": "451868", "a": "451869", "fuente": "flecha"},   // Inglés Comunic. I Nivel Principiante -> Inglés Comunic. II Nivel Elemental
+  {"de": "451836", "a": "451848", "fuente": "confirmada"},   // Microeconomía I -> Microeconomía II
+  {"de": "451832", "a": "451849", "fuente": "flecha"},   // Álgebra II -> Métodos Cuantitativos
+  {"de": "451845", "a": "451854", "fuente": "confirmada"},   // Finanzas I -> Administración Estratégica I
+  {"de": "451844", "a": "451852", "fuente": "flecha"},   // Estadística II -> Econometría I
+  {"de": "451845", "a": "451850", "fuente": "flecha"},   // Finanzas I -> Finanzas II
+  {"de": "451849", "a": "451851", "fuente": "flecha"},   // Métodos Cuantitativos -> Gestión de Operaciones
+  {"de": "451869", "a": "451870", "fuente": "flecha"},   // Inglés Comunic. II Nivel Elemental -> Inglés Comunic. III Nivel Básico
+  {"de": "451840", "a": "451853", "fuente": "confirmada"},   // Macroeconomía I -> Macroeconomía II
+  {"de": "451845", "a": "451855", "fuente": "confirmada"},   // Finanzas I -> Evaluación de Proyectos
+  {"de": "451848", "a": "451855", "fuente": "confirmada"},   // Microeconomía II -> Evaluación de Proyectos
+  {"de": "451846", "a": "451857", "fuente": "flecha"},   // Gestión de Marketing I -> Gestión de Marketing II
+  {"de": "451854", "a": "451858", "fuente": "flecha"},   // Administración Estratégica I -> Gestión de Personas II
+  {"de": "451870", "a": "451871", "fuente": "flecha"},   // Inglés Comunic. III Nivel Básico -> Inglés Comunic. IV Nivel Básico Alto
+  {"de": "451854", "a": "451861", "fuente": "flecha"},   // Administración Estratégica I -> Administración Estratégica II
+  {"de": "451854", "a": "451862", "fuente": "flecha"},   // Administración Estratégica I -> Met. de la Investigación en Administración
+  {"de": "451862", "a": "451866", "fuente": "flecha"}   // Met. de la Investigación en Administración -> Trabajo Profesional en Administración
 ];
+
+const ANIOS = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]];
+const ORD = ['Primer año', 'Segundo año', 'Tercer año', 'Cuarto año', 'Quinto año'];
 
 const store = (() => {
   const mem = {};
-  try {
-    localStorage.setItem('__t', '1'); localStorage.removeItem('__t');
-    return { get: k => localStorage.getItem(k), set: (k, v) => localStorage.setItem(k, v) };
-  } catch (e) {
-    return { get: k => (k in mem ? mem[k] : null), set: (k, v) => { mem[k] = v; } };
-  }
+  try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t');
+    return { g: k => localStorage.getItem(k), s: (k, v) => localStorage.setItem(k, v) };
+  } catch (e) { return { g: k => (k in mem ? mem[k] : null), s: (k, v) => { mem[k] = v; } }; }
 })();
-
-/* algunos navegadores antiguos / entornos embebidos no traen rAF */
-const raf = (typeof requestAnimationFrame === 'function')
-  ? requestAnimationFrame : (fn => setTimeout(fn, 16));
 
 const esc = s => (s || '').toString()
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const RAMO = {};
-MALLA.ramos.forEach(r => RAMO[r.codigo] = r);
-const SEMS = [...new Set(MALLA.ramos.map(r => r.semestre))].sort((a, b) => a - b);
-const BANDAS = Math.max(...MALLA.ramos.map(r => r.banda)) + 1;
-const CRED_TOT = MALLA.ramos.reduce((a, r) => a + (r.creditos || 0), 0);
+const R = {};
+RAMOS.forEach(r => R[r.codigo] = r);
+const CRED_TOT = RAMOS.reduce((a, r) => a + (r.creditos || 0), 0);
 
-const state = {
-  aprobados: new Set(JSON.parse(store.get('malla:aprobados') || '[]').filter(c => RAMO[c])),
+const st = {
+  ok: new Set(JSON.parse(store.g('mallaic:ok') || '[]').filter(c => R[c])),
   sel: null,
-  edits: JSON.parse(store.get('malla:edits') || 'null'),
-  recien: new Set(),
 };
+const guardar = () => store.s('mallaic:ok', JSON.stringify([...st.ok]));
 
-/* ---------- prerrequisitos vigentes (borrador + correcciones) ---------- */
-function relaciones() {
-  if (state.edits) return state.edits;
-  return PREREQ.map(r => ({ ...r }));
-}
-function reqsDe(cod) {
-  return relaciones().filter(r => r.a === cod && RAMO[r.de]);
-}
-function abreA(cod) {
-  return relaciones().filter(r => r.de === cod && RAMO[r.a]);
-}
-function guardar() {
-  store.set('malla:aprobados', JSON.stringify([...state.aprobados]));
-  if (state.edits) store.set('malla:edits', JSON.stringify(state.edits));
-}
+const reqs = c => PREREQ.filter(p => p.a === c && R[p.de]);
+const abre = c => PREREQ.filter(p => p.de === c && R[p.a]);
+const falta = c => reqs(c).filter(p => !st.ok.has(p.de)).map(p => p.de);
+const estado = c => st.ok.has(c) ? 'aprob' : (falta(c).length ? 'bloq' : 'disp');
 
-const aprobado = c => state.aprobados.has(c);
-function faltantes(cod) {
-  return reqsDe(cod).filter(r => !aprobado(r.de)).map(r => r.de);
-}
-function estado(cod) {
-  if (aprobado(cod)) return 'aprobado';
-  return faltantes(cod).length ? 'bloqueado' : 'disponible';
-}
-
-/* ---------- cadena completa que falta para un ramo ---------- */
-function cadenaFaltante(cod, visto = new Set()) {
+function cadena(c, visto = new Set()) {
   const out = [];
-  for (const r of reqsDe(cod)) {
-    if (visto.has(r.de)) continue;
-    visto.add(r.de);
-    if (!aprobado(r.de)) {
-      out.push(...cadenaFaltante(r.de, visto));
-      out.push(r.de);
-    }
+  for (const p of reqs(c)) {
+    if (visto.has(p.de)) continue;
+    visto.add(p.de);
+    if (!st.ok.has(p.de)) { out.push(...cadena(p.de, visto)); out.push(p.de); }
   }
   return [...new Set(out)];
 }
 
-/* ---------- dibujo de la malla ---------- */
-function pintarMalla() {
-  const g = document.getElementById('malla');
-  g.style.gridTemplateRows = `auto repeat(${BANDAS}, minmax(56px,auto))`;
-  let html = '<svg class="arcos" id="arcos"></svg>';
-  SEMS.forEach((s, i) => {
-    html += `<div class="semhead" style="grid-column:${i + 1}">${s}º sem.</div>`;
-  });
-  const rel = state.sel ? new Set([state.sel,
-    ...reqsDe(state.sel).map(r => r.de), ...abreA(state.sel).map(r => r.a)]) : null;
-  for (const r of MALLA.ramos) {
-    const est = estado(r.codigo);
-    const cls = ['ramo', est];
-    if (r.electivo) cls.push('electivo');
-    if (state.sel === r.codigo) cls.push('sel');
-    if (rel && !rel.has(r.codigo)) cls.push('atenuado');
-    if (state.recien.has(r.codigo)) cls.push('nuevo');
-    const col = SEMS.indexOf(r.semestre) + 1;
-    const etq = r.electivo ? `${r.creditos} cr` : `${r.codigo} · ${r.creditos || '–'} cr`;
-    // en los bloqueados el tooltip dice que falta, sin necesidad de marcarlos
-    const falt = est === 'bloqueado'
-      ? 'Te falta aprobar: ' + faltantes(r.codigo).map(c => RAMO[c].nombre).join(', ')
-      : (est === 'disponible' ? 'Puedes tomarlo' : 'Aprobado');
-    html += `<button type="button" class="${cls.join(' ')}" data-cod="${r.codigo}"
-      style="grid-column:${col}; grid-row:${r.banda + 2}"
-      title="${esc(r.nombre + ' — ' + falt)}"
-      aria-pressed="${est === 'aprobado'}">
-      <span class="nm">${esc(r.nombre)}</span><span class="cd">${esc(etq)}</span></button>`;
-  }
-  g.innerHTML = html;
-  g.querySelectorAll('.ramo').forEach(b => {
-    b.onclick = () => alternar(b.dataset.cod);
-  });
-  raf(dibujarArcos);
-}
-
-function alternar(cod) {
-  const antes = new Set(MALLA.ramos.filter(r => estado(r.codigo) === 'disponible').map(r => r.codigo));
-  if (aprobado(cod)) state.aprobados.delete(cod); else state.aprobados.add(cod);
-  state.recien = new Set(MALLA.ramos
-    .filter(r => estado(r.codigo) === 'disponible' && !antes.has(r.codigo)).map(r => r.codigo));
-  state.sel = cod;
-  pintar();
-  setTimeout(() => { state.recien = new Set(); }, 1600);
-}
-
-/* ---------- flechas ---------- */
-function dibujarArcos() {
-  const g = document.getElementById('malla');
-  const svg = document.getElementById('arcos');
-  if (!svg || !g) return;
-  const base = g.getBoundingClientRect();
-  if (!base.width) return;
-  const caja = {};
-  g.querySelectorAll('.ramo').forEach(b => {
-    const r = b.getBoundingClientRect();
-    caja[b.dataset.cod] = { x1: r.left - base.left, x2: r.right - base.left,
-      y: r.top - base.top + r.height / 2 };
-  });
-  const ESTILO = { alta: ['4 0', .5], media: ['5 3', .42], revisar: ['2 3', .55] };
-  let d = `<defs>
-    <marker id="mk" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-      <path d="M0,0 L7,3.5 L0,7 Z" fill="currentColor"/></marker></defs>`;
-  for (const r of relaciones()) {
-    const a = caja[r.de], b = caja[r.a];
-    if (!a || !b) continue;
-    const activo = state.sel === r.de || state.sel === r.a;
-    const [dash, op] = ESTILO[r.confianza] || ESTILO.media;
-    const color = r.confianza === 'revisar' ? 'var(--warn)'
-      : (activo ? 'var(--accent)' : 'var(--muted)');
-    const mx = a.x2 + Math.max(7, (b.x1 - a.x2) / 2);
-    d += `<path d="M${a.x2} ${a.y} H${mx} V${b.y} H${b.x1 - 2}"
-      fill="none" stroke="${color}" stroke-width="${activo ? 1.9 : 1.1}"
-      stroke-dasharray="${dash}" opacity="${activo ? .95 : (state.sel ? .12 : op)}"
-      marker-end="url(#mk)" style="color:${color}"/>`;
-  }
-  svg.innerHTML = d;
-}
-window.addEventListener('resize', () => raf(dibujarArcos));
-
-/* ---------- panel ---------- */
-function pintarPanel() {
-  const cred = MALLA.ramos.filter(r => aprobado(r.codigo))
-    .reduce((a, r) => a + (r.creditos || 0), 0);
-  document.getElementById('cCred').textContent = cred;
-  document.getElementById('cCredTot').textContent = CRED_TOT;
-  document.getElementById('cRamos').textContent = state.aprobados.size;
-  document.getElementById('cRamosTot').textContent = MALLA.ramos.length;
-  document.getElementById('barra').style.width = (100 * cred / CRED_TOT).toFixed(1) + '%';
-
-  const disp = MALLA.ramos.filter(r => estado(r.codigo) === 'disponible');
-  document.getElementById('cDisp').textContent = disp.length;
-  document.getElementById('disponibles').innerHTML = disp.length
-    ? disp.map(r => `<button type="button" class="item" data-cod="${r.codigo}">
-        <span class="pt"></span><span>
-        <span class="nm">${esc(r.nombre)}</span>
-        <span class="mt">${r.semestre}º sem. · ${r.creditos || '–'} cr</span></span></button>`).join('')
-    : '<p class="vacio">Nada disponible: marca los ramos que ya aprobaste.</p>';
-  document.querySelectorAll('#disponibles .item').forEach(b =>
-    b.onclick = () => { state.sel = b.dataset.cod; pintar(); });
-
-  document.getElementById('leyenda').textContent =
-    `${state.aprobados.size} aprobados · ${disp.length} disponibles`;
-
-  // detalle
-  const el = document.getElementById('detalle');
-  if (!state.sel) {
-    el.innerHTML = '<p class="vacio" style="padding:4px 0">Toca un ramo en la malla para ver sus '
-      + 'prerrequisitos y qué desbloquea.</p>';
-    return;
-  }
-  const r = RAMO[state.sel], est = estado(r.codigo), reqs = reqsDe(r.codigo), abre = abreA(r.codigo);
-  const falta = cadenaFaltante(r.codigo);
-  const ETQ = { aprobado: 'Aprobado', disponible: 'Puedes tomarlo', bloqueado: 'Bloqueado' };
-  let h = `<h3>${esc(r.nombre)}</h3>
-    <p class="sub">${r.electivo ? 'Electivo' : r.codigo} · ${r.semestre}º semestre ·
-       ${r.creditos || '–'} créditos · <b>${ETQ[est]}</b></p>
-    <button type="button" class="add" style="width:100%"><span></span></button>`;
-  h = h.replace(/<button type="button" class="add"[\s\S]*?<\/button>/,
-    `<div class="add"><button type="button" id="btnToggle" style="flex:1">
-       ${est === 'aprobado' ? 'Quitar de aprobados' : 'Marcar como aprobado'}</button></div>`);
-
-  if (est === 'aprobado' && faltantes(r.codigo).length)
-    h += `<p class="ayuda" style="color:var(--warn); margin:8px 0 0">Lo marcaste como aprobado,
-          pero sus prerrequisitos no están marcados. Revisa si te falta marcar algo.</p>`;
-  h += '<h4>Prerrequisitos</h4>';
-  h += reqs.length ? reqs.map(q => {
-    const ok = aprobado(q.de);
-    return `<div class="req">
-      <span class="est" style="color:${ok ? 'var(--ok)' : 'var(--warn)'}">${ok ? '✓' : '✗'}</span>
-      <span class="tx">${esc(RAMO[q.de].nombre)}</span>
-      <span class="badge b-${q.confianza}" title="${esc(q.razon || '')}">${q.confianza}</span>
-      <button type="button" class="x" data-quitar="${q.de}" aria-label="Quitar prerrequisito">×</button>
-    </div>`;
-  }).join('') : '<p class="ayuda" style="margin-top:0">Sin prerrequisitos.</p>';
-
-  const opts = MALLA.ramos.filter(x => x.codigo !== r.codigo
-      && !reqs.some(q => q.de === x.codigo) && x.semestre <= r.semestre)
-    .map(x => `<option value="${x.codigo}">${esc(x.nombre)} (${x.semestre}º)</option>`).join('');
-  h += `<div class="add"><select id="selReq"><option value="">Agregar prerrequisito…</option>
-        ${opts}</select><button type="button" id="btnAdd">Agregar</button></div>`;
-
-  if (falta.length > reqs.filter(q => !aprobado(q.de)).length)
-    h += `<h4>Cadena completa que te falta</h4><p class="ayuda" style="margin:0">`
-      + falta.map(c => esc(RAMO[c].nombre)).join(' → ') + '</p>';
-
-  h += '<h4>Le abre paso a</h4>';
-  h += abre.length
-    ? abre.map(q => `<div class="req"><span class="tx">${esc(RAMO[q.a].nombre)}</span>
-        <span class="badge b-${q.confianza}">${q.confianza}</span></div>`).join('')
-    : '<p class="ayuda" style="margin-top:0">No es prerrequisito de ningún ramo.</p>';
-
-  el.innerHTML = h;
-  document.getElementById('btnToggle').onclick = () => alternar(r.codigo);
-  el.querySelectorAll('[data-quitar]').forEach(b => b.onclick = () => {
-    state.edits = relaciones().filter(x => !(x.a === r.codigo && x.de === b.dataset.quitar));
-    pintar();
-  });
-  document.getElementById('btnAdd').onclick = () => {
-    const v = document.getElementById('selReq').value;
-    if (!v) return;
-    state.edits = relaciones().concat([{ de: v, a: r.codigo, confianza: 'alta',
-      razon: 'confirmado a mano' }]);
-    pintar();
-  };
-}
-
-/* ---------- diálogo de procedencia de los datos ---------- */
-function pintarDialogo() {
-  const rel = relaciones();
-  const cuenta = k => rel.filter(r => r.confianza === k).length;
-  const fila = r => `<tr><td>${esc(RAMO[r.de].nombre)}</td><td>${esc(RAMO[r.a].nombre)}</td>
-    <td><span class="badge b-${r.confianza}">${r.confianza}</span></td></tr>`;
-  document.getElementById('dlgCuerpo').innerHTML = `
-    <p>Ni el Excel de la Escuela ni el PDF oficial de la malla 2014 traen los prerrequisitos
-       escritos: están solamente dibujados como flechas. Estas ${rel.length} relaciones se
-       reconstruyeron midiendo la posición de esas 78 líneas, así que son un
-       <b>borrador que hay que confirmar con la Escuela</b>.</p>
-    <p><b>${cuenta('alta')}</b> de confianza alta (secuencias del tipo I → II),
-       <b>${cuenta('media')}</b> medias y <b>${cuenta('revisar')}</b> dudosas.
-       Puedes corregir cualquiera desde el panel de detalle y luego descargar
-       el archivo con tus correcciones.</p>
-    ${MALLA.huecos.length ? `<p style="color:var(--warn)"><b>Flechas que se esperaban y no
-       aparecieron:</b> ${MALLA.huecos.map(h =>
-         esc(RAMO[h.de].nombre) + ' → ' + esc(RAMO[h.a].nombre)).join('; ')}.
-       Si la Escuela confirma que existen, agrégalas a mano.</p>` : ''}
-    <table><thead><tr><th>Prerrequisito</th><th>Ramo</th><th>Confianza</th></tr></thead><tbody>
-      ${rel.filter(r => r.confianza === 'revisar').map(fila).join('')}
-      ${rel.filter(r => r.confianza !== 'revisar').map(fila).join('')}
-    </tbody></table>
-    <div class="add"><button type="button" id="btnBajar" style="flex:1">Descargar prerrequisitos</button>
-      <button type="button" class="cerrar" id="btnReset">Volver al borrador</button></div>
-    <p class="ayuda">Tus correcciones se guardan solo en este navegador. Para que las vean
-       todos, descarga el archivo y pega su contenido en el bloque
-       <code>const PREREQ = [ … ]</code> que está dentro de <code>malla.html</code>,
-       cerca del comienzo del script. El archivo descargado ya viene con el formato correcto
-       y con el nombre de cada ramo comentado al lado.</p>`;
-  document.getElementById('btnBajar').onclick = () => {
-    const orden = relaciones()
-      .sort((x, y) => (RAMO[x.a].semestre - RAMO[y.a].semestre)
-        || RAMO[x.a].nombre.localeCompare(RAMO[y.a].nombre));
-    // la coma va ANTES del comentario, si no queda dentro de el
-    const cuerpo = orden.map((r, i) => '  ' + JSON.stringify(r)
-      + (i < orden.length - 1 ? ',' : '')
-      + '   // ' + RAMO[r.de].nombre + ' -> ' + RAMO[r.a].nombre).join('\n');
-    const txt = '[\n' + cuerpo + '\n]';
-    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'prerrequisitos.txt';
-    a.click(); URL.revokeObjectURL(a.href);
-  };
-  document.getElementById('btnReset').onclick = () => {
-    state.edits = null; store.set('malla:edits', ''); pintar(); pintarDialogo();
-  };
-}
-
+/* ---------- dibujo ---------- */
 function pintar() {
-  const rev = relaciones().filter(r => r.confianza === 'revisar').length;
-  document.getElementById('nota').innerHTML =
-    `<b>Los prerrequisitos son un borrador</b>La malla oficial no los trae escritos; se
-     reconstruyeron de las flechas del Excel. ${rev} están marcadas como dudosas.
-     <button type="button" id="notaVer">Ver de dónde salen y corregirlos</button>`;
-  document.getElementById('notaVer').onclick = abrirDialogo;
-  pintarMalla();
-  pintarPanel();
+  const setReq = st.sel ? new Set(reqs(st.sel).map(p => p.de)) : new Set();
+  const setAbr = st.sel ? new Set(abre(st.sel).map(p => p.a)) : new Set();
+  let html = '';
+  ANIOS.forEach((sems, i) => {
+    html += `<section class="anio"><h2>${ORD[i]}</h2><div class="sems">`;
+    for (const s of sems) {
+      const lista = RAMOS.filter(r => r.semestre === s).sort((a, b) => a.banda - b.banda);
+      html += `<div class="sem"><h3>Semestre ${s}</h3><div class="cajas">`;
+      for (const r of lista) {
+        const est = estado(r.codigo);
+        const cls = ['ramo', est];
+        if (r.electivo) cls.push('electivo');
+        if (st.sel === r.codigo) cls.push('sel');
+        else if (setReq.has(r.codigo)) cls.push('req');
+        else if (setAbr.has(r.codigo)) cls.push('abre');
+
+        const nAbre = abre(r.codigo).length;
+        const pin = est === 'aprob' ? '✓' : (est === 'bloq' ? '' : (nAbre || ''));
+        const tip = est === 'aprob' ? 'Aprobado'
+          : est === 'disp' ? 'Sin prerrequisitos pendientes: puedes tomarlo'
+          : 'Te falta aprobar: ' + falta(r.codigo).map(x => R[x].nombre).join(', ');
+        html += `<button type="button" class="${cls.join(' ')}" data-c="${r.codigo}"
+          title="${esc(r.nombre + ' — ' + tip)}" aria-pressed="${est === 'aprob'}">
+          <span class="top"><span class="cod">${esc(r.electivo ? 'Electivo' : r.codigo)}</span>
+            <span class="cr">${r.creditos || '–'} cr</span></span>
+          <span class="nom">${esc(r.nombre)}</span>
+          <span class="pin">${pin}</span></button>`;
+      }
+      html += '</div></div>';
+    }
+    html += '</div></section>';
+  });
+  const cont = document.getElementById('anios');
+  cont.innerHTML = html;
+  cont.classList.toggle('hayfoco', !!st.sel);
+
+  cont.querySelectorAll('.ramo').forEach(b => {
+    const c = b.dataset.c;
+    b.onclick = () => { st.sel = st.sel === c ? null : c; pintar(); };
+    b.oncontextmenu = e => { e.preventDefault(); alternar(c); };
+    let t = null;
+    b.addEventListener('touchstart', () => { t = setTimeout(() => { t = null; alternar(c); }, 460); },
+      { passive: true });
+    const cancel = () => { if (t) { clearTimeout(t); t = null; } };
+    b.addEventListener('touchend', cancel);
+    b.addEventListener('touchmove', cancel);
+  });
+
+  const cred = RAMOS.filter(r => st.ok.has(r.codigo)).reduce((a, r) => a + (r.creditos || 0), 0);
+  document.getElementById('pct').textContent = Math.round(100 * cred / CRED_TOT) + '%';
+  document.getElementById('bar').style.width = (100 * cred / CRED_TOT).toFixed(1) + '%';
+  document.getElementById('cr').textContent = cred;
+  document.getElementById('crTot').textContent = CRED_TOT;
+  document.getElementById('nr').textContent = st.ok.size;
+  document.getElementById('nrTot').textContent = RAMOS.length;
+  document.getElementById('nd').textContent =
+    RAMOS.filter(r => estado(r.codigo) === 'disp').length;
   guardar();
 }
 
-function abrirDialogo() { pintarDialogo(); document.getElementById('dlg').showModal(); }
-document.getElementById('btnDatos').onclick = abrirDialogo;
+function alternar(c) {
+  if (st.ok.has(c)) st.ok.delete(c); else st.ok.add(c);
+  pintar();
+}
+
+/* ---------- diálogo de prerrequisitos ---------- */
+function abrirDlg() {
+  let filas = '';
+  for (let s = 1; s <= 10; s++) {
+    const lista = RAMOS.filter(r => r.semestre === s && reqs(r.codigo).length)
+      .sort((a, b) => a.banda - b.banda);
+    if (!lista.length) continue;
+    filas += `<tr class="sem-sep"><td colspan="2">Semestre ${s}</td></tr>`;
+    for (const r of lista)
+      filas += `<tr><td class="ramoq">${esc(r.nombre)}</td>
+        <td>${reqs(r.codigo).map(p => esc(R[p.de].nombre)).join('<br>')}</td></tr>`;
+  }
+  const sinReq = RAMOS.filter(r => !r.electivo && !reqs(r.codigo).length)
+    .sort((a, b) => a.semestre - b.semestre || a.banda - b.banda);
+  document.getElementById('dlgC').innerHTML = `
+    <table><thead><tr><th>Ramo</th><th>Requiere haber aprobado</th></tr></thead>
+      <tbody>${filas}</tbody></table>
+    <p style="margin:16px 0 6px;font-size:12px;color:var(--gris-osc)">
+      Sin prerrequisitos: ${sinReq.map(r => esc(r.nombre)).join(' · ')}.</p>`;
+  document.getElementById('dlg').showModal();
+}
+
+document.getElementById('bPre').onclick = abrirDlg;
 document.getElementById('dlgX').onclick = () => document.getElementById('dlg').close();
-document.getElementById('btnPrint').onclick = () => window.print();
-document.getElementById('btnClear').onclick = () => {
-  if (!state.aprobados.size || confirm('¿Desmarcar todos los ramos aprobados?')) {
-    state.aprobados.clear(); state.sel = null; pintar();
+document.getElementById('bImp').onclick = () => window.print();
+document.getElementById('bVac').onclick = () => {
+  if (!st.ok.size || confirm('¿Desmarcar todos los ramos aprobados?')) {
+    st.ok.clear(); st.sel = null; pintar();
   }
 };
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && st.sel) { st.sel = null; pintar(); }
+});
 
 pintar();
 </script>
